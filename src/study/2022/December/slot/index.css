@@ -1,0 +1,98 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.slots {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(to bottom, #220e3f, #253d77) no-repeat 0 0/cover;
+}
+.slots .slots-inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  width: 100%;
+  height: 100px;
+  margin-top: 100px;
+  overflow: hidden;
+}
+.slots .slots-inner ul:nth-child(1).spin {
+  animation: spin 1.5s 0.15s 3 linear forwards;
+}
+.slots .slots-inner ul:nth-child(2).spin {
+  animation: spin 1.5s 0.3s 3 linear forwards;
+}
+.slots .slots-inner ul:nth-child(3).spin {
+  animation: spin 1.5s 0.45s 3 linear forwards;
+}
+.slots .slots-inner ul:nth-child(4).spin {
+  animation: spin 1.5s 0.6s 3 linear forwards;
+}
+.slots .slots-inner::before, .slots .slots-inner::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  z-index: 1;
+  overflow: hidden;
+}
+.slots .slots-inner::before {
+  top: 0;
+  background: linear-gradient(#232358, rgba(35, 35, 88, 0.9) 100%);
+}
+.slots .slots-inner::after {
+  bottom: 0;
+  background: linear-gradient(to top, #24285e, rgba(36, 40, 94, 0.9) 100%);
+}
+.slots .slots-inner.active::before, .slots .slots-inner.active::after {
+  animation: fadeIn 3s 8s linear forwards;
+}
+.slots ul {
+  list-style: none;
+}
+.slots ul li {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  height: 100px;
+  font-size: 66.6666666667px;
+  transition: 100ms;
+  color: #fff;
+  font-family: hind;
+}
+.slots .button {
+  outline: none;
+  border: 0;
+  padding: 10px 20px;
+  margin-top: 50px;
+  font-size: 20px;
+  background-color: transparent;
+  transition: 100ms;
+  color: #fff;
+  font-family: hind;
+}
+.slots .button:active {
+  transform: scale(0.9);
+}
+
+@keyframes spin {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100%);
+  }
+}
+@keyframes fadeIn {
+  to {
+    height: 10px;
+  }
+}/*# sourceMappingURL=index.css.map */

@@ -1,0 +1,114 @@
+body {
+  background: #222;
+}
+
+div,
+::after {
+  position: absolute;
+  border-radius: 50%;
+  transform-style: preserve-3d;
+}
+
+.ring {
+  top: 50%;
+  left: 50%;
+}
+.ring::after {
+  content: "";
+  width: 300px;
+  height: 300px;
+  border: 15px solid #fff;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 9px #222;
+}
+
+.dot:nth-child(1) {
+  transform: rotate(30deg) translate(150px);
+}
+.dot:nth-child(1)::after {
+  animation-delay: -0.1666666667s;
+}
+.dot:nth-child(2) {
+  transform: rotate(60deg) translate(150px);
+}
+.dot:nth-child(2)::after {
+  animation-delay: -0.3333333333s;
+}
+.dot:nth-child(3) {
+  transform: rotate(90deg) translate(150px);
+}
+.dot:nth-child(3)::after {
+  animation-delay: -0.5s;
+}
+.dot:nth-child(4) {
+  transform: rotate(120deg) translate(150px);
+}
+.dot:nth-child(4)::after {
+  animation-delay: -0.6666666667s;
+}
+.dot:nth-child(5) {
+  transform: rotate(150deg) translate(150px);
+}
+.dot:nth-child(5)::after {
+  animation-delay: -0.8333333333s;
+}
+.dot:nth-child(6) {
+  transform: rotate(180deg) translate(150px);
+}
+.dot:nth-child(6)::after {
+  animation-delay: -1s;
+}
+.dot:nth-child(7) {
+  transform: rotate(210deg) translate(150px);
+}
+.dot:nth-child(7)::after {
+  animation-delay: -1.1666666667s;
+}
+.dot:nth-child(8) {
+  transform: rotate(240deg) translate(150px);
+}
+.dot:nth-child(8)::after {
+  animation-delay: -1.3333333333s;
+}
+.dot:nth-child(9) {
+  transform: rotate(270deg) translate(150px);
+}
+.dot:nth-child(9)::after {
+  animation-delay: -1.5s;
+}
+.dot:nth-child(10) {
+  transform: rotate(300deg) translate(150px);
+}
+.dot:nth-child(10)::after {
+  animation-delay: -1.6666666667s;
+}
+.dot:nth-child(11) {
+  transform: rotate(330deg) translate(150px);
+}
+.dot:nth-child(11)::after {
+  animation-delay: -1.8333333333s;
+}
+.dot:nth-child(12) {
+  transform: rotate(360deg) translate(150px);
+}
+.dot:nth-child(12)::after {
+  animation-delay: -2s;
+}
+.dot::after {
+  content: "";
+  width: 30px;
+  height: 30px;
+  border: 8px solid #222;
+  margin: -15px;
+  background: #fff;
+  animation: play 2s linear infinite;
+}
+
+@keyframes play {
+  0% {
+    transform: rotateY(0) translate(60px) rotateY(0);
+  }
+  100% {
+    transform: rotateY(360deg) translate(60px) rotateY(-360deg);
+  }
+}/*# sourceMappingURL=index.css.map */

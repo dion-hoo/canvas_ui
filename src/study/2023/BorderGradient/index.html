@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      .box {
+        position: relative;
+        width: 300px;
+        height: 300px;
+        margin: 300px auto 0;
+        /* background-image: conic-gradient(from 0rad, red, blue); */
+        background-position: center center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        border-radius: 16px;
+        &::after {
+          content: "";
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 290px;
+          height: 290px;
+          background-color: #000;
+          border-radius: 16px;
+          transform: translate(-50%, -50%);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box"></div>
+    <script>
+      const box = document.querySelector(".box");
+      let angle = 0;
+
+      function animate() {
+        angle += 0.05;
+        box.style.backgroundImage = `conic-gradient(from ${angle}rad, red, blue)`;
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+    </script>
+  </body>
+</html>
