@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./index.css" />
+  </head>
+  <body>
+    <div class="box">
+      <div class="inner">
+        <img src="../../../assets/img/banner.png" alt="" />
+      </div>
+      <canvas></canvas>
+    </div>
+
+    <script>
+      const canvas = document.querySelector("canvas");
+      const ctx = canvas.getContext("2d");
+      const ratio = window.devicePixelRatio;
+
+      const width = 346;
+      const height = 98;
+      const strokeWidth = 1.5;
+
+      canvas.width = width * ratio;
+      canvas.height = height * ratio;
+
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+
+      ctx.scale(ratio, ratio);
+
+      // top-left
+
+      ctx.save();
+      ctx.globalCompositeOperation = "source-out";
+
+      ctx.beginPath();
+
+      ctx.fillStyle = "yellow";
+      ctx.arc(16 + strokeWidth, 16 + strokeWidth, 16, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "red";
+      ctx.fillRect(0, 0, 16, 16);
+
+      ctx.closePath();
+      ctx.restore();
+
+      ctx.save();
+      ctx.globalCompositeOperation = "source-out";
+
+      ctx.beginPath();
+
+      ctx.fillStyle = "yellow";
+      ctx.arc(346 - 16 - strokeWidth, 16, 16, 0, Math.PI * 2);
+
+      ctx.fillStyle = "red";
+      ctx.fillRect(346 - 16, 0, 16, 16);
+      ctx.fill();
+      ctx.closePath();
+      ctx.restore();
+
+      ctx.save();
+
+      // ctx.globalCompositeOperation = "source-out";
+      ctx.beginPath();
+      ctx.fillStyle = "red";
+      ctx.fillRect(0, 98 - 16, 16, 16);
+      ctx.fillStyle = "yellow";
+      ctx.arc(16 + strokeWidth, 98 - 16 - strokeWidth, 16, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.closePath();
+      ctx.restore();
+
+      ctx.save();
+
+      //  ctx.globalCompositeOperation = "source-out";
+      ctx.beginPath();
+      ctx.fillStyle = "red";
+      ctx.fillRect(346 - 16, 98 - 16, 16, 16);
+      ctx.fillStyle = "yellow";
+      ctx.arc(
+        346 - 16 - strokeWidth,
+        98 - 16 - strokeWidth,
+        16,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+      ctx.closePath();
+      ctx.restore();
+    </script>
+  </body>
+</html>
