@@ -12,11 +12,13 @@ const time = document.querySelector(".time");
 const video = document.querySelector("video");
 const fov = document.querySelector(".fov");
 
-video.volume = 0;
+video.volume = 0.5;
 
 let isDown = false;
 let moveX = 0;
 let moveY = 0;
+let x = 0;
+let y = 0;
 let offsetX = 0;
 let offsetY = 0;
 let wifi;
@@ -63,17 +65,21 @@ const animate = () => {
 
   time.innerHTML = `00:${hour}:${minute}:${second}`;
 
+  const blur = apeture.blur * 0.01;
+
   ctx.save();
-  ctx.filter = "blur(0px)";
-  wrap.style.filter = "blur(0px)";
+  ctx.filter = `blur(${blur}px)`;
+  wrap.style.filter = `blur(${blur}px)`;
 
   videoIns.draw(ctx);
 
   // quality
   quality.draw(ctx);
 
+  moveY *= 0.96;
+
   // charger
-  charger.draw(ctx);
+  charger.draw(ctx, moveY, x, y);
 
   // wifi
   wifi.draw(ctx, timestamp);
@@ -85,7 +91,7 @@ const animate = () => {
   arrow.draw(ctx);
 
   moveX *= 0.98;
-  apeture.draw(ctx, moveX);
+  apeture.draw(ctx, moveX, y);
 
   if (timestamp * 0.5 === 95) {
     increment = false;
@@ -104,10 +110,14 @@ animate();
 const onDown = (event) => {
   isDown = true;
   moveX = 0;
+  moveY = 0;
+  x = 0;
+  y = 0;
   offsetX = event.clientX;
+  offsetY = event.clientY;
 
   if (!isClick) {
-    video.currentTime = 108;
+    video.currentTime = 0; // 108;
     video.play();
 
     isClick = true;
@@ -117,6 +127,9 @@ const onMove = (event) => {
   if (isDown) {
     moveX = event.clientX - offsetX;
     moveY = event.clientY - offsetY;
+
+    x = event.clientX;
+    y = event.clientY;
 
     offsetX = event.clientX;
     offsetY = event.clientY;

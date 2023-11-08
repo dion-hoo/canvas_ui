@@ -11,7 +11,7 @@ export class Charger {
     }
   }
 
-  draw(ctx) {
+  draw(ctx, moveY, x, y) {
     ctx.fillStyle = "#fff";
     ctx.beginPath();
     ctx.fillRect(this.x, this.y, 140, 40);
@@ -29,7 +29,11 @@ export class Charger {
       const p = this.pointArray[i];
 
       if (i < this.pointArray.length - 1) {
-        p.update();
+        if (this.x < x && x < this.x + 140 && this.y < y && y < this.y + 40) {
+          p.update((moveY *= 0.4));
+        } else {
+          p.update(0);
+        }
       }
 
       const cx = (p.x + prevX) / 2;

@@ -6,10 +6,14 @@ export class Apeture {
     this.space = 20;
     this.height = 20;
     this.position = -((this.line / 2) * this.space);
+    this.startPoint = (this.line / 2) * this.space;
+    this.blur = 0;
   }
 
-  draw(ctx, moveX) {
-    this.position += moveX * 0.9999;
+  draw(ctx, moveX, y) {
+    if (this.y - 40 <= y && y < this.y + 40) {
+      this.position += moveX * 0.9999;
+    }
 
     if (this.position > 0) {
       this.position = 0;
@@ -17,6 +21,8 @@ export class Apeture {
     if (this.line * this.space < Math.abs(this.position)) {
       this.position = -this.line * this.space;
     }
+
+    this.blur = -(this.startPoint + this.position);
 
     ctx.save();
     ctx.translate(this.position, 0);

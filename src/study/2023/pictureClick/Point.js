@@ -8,8 +8,8 @@ export class Point {
     this.maxHeight = Math.random() * 5 + 5;
   }
 
-  update() {
-    this.cur += 0.05;
+  update(moveY) {
+    this.cur += 0.05 + moveY;
     this.y = this.y2 + Math.sin(this.cur) * this.maxHeight;
   }
 
