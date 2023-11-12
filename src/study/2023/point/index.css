@@ -4,61 +4,106 @@
   left: 50%;
   width: 500px;
   height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transform: translate(-50%, -50%);
   border: 1px solid #000;
 }
 
 .point {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+.point::before {
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 50px;
-  height: 50px;
-  background-color: #db3535;
+  width: 98%;
+  height: 98%;
   border-radius: 50%;
-  opacity: 0.8;
-  transform: translate(-50%, -50%);
-  transform-origin: 50% 50%;
-}
-.point::after, .point::before {
-  --angle: 0rad;
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  border-radius: 50%;
-  background: conic-gradient(from var(--angle), transparent, #db3535);
   border: 1px solid #db3535;
-  z-index: -1;
-}
-.point::before {
-  animation: wave 1.7s infinite, rotate 1.7s infinite;
+  transform: translate(-50%, -50%);
+  animation: wave 1.5s 0.2s infinite reverse;
 }
 .point::after {
-  animation: wave2 1.7s 0.2s infinite, rotate 1.7s 0.2s infinite;
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 1px solid #db3535;
+  transform: translate(-50%, -50%);
+  animation: wave 1.5s infinite reverse;
 }
 
 @keyframes wave {
+  from {
+    opacity: 0;
+  }
   to {
-    transform: scale(4);
+    width: 0;
+    height: 0;
+    opacity: 1;
+  }
+}
+.point2 {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+.point2::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: wave3 1.5s 0.2s infinite;
+}
+.point2::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: wave2 1.5s infinite;
+}
+
+@keyframes wave3 {
+  from {
+    opacity: 1;
+    border: 1px solid #db3535;
+  }
+  95% {
+    border: 1px solid #db3535;
+  }
+  to {
+    width: 98%;
+    height: 98%;
     opacity: 0;
   }
 }
 @keyframes wave2 {
+  from {
+    opacity: 1;
+    border: 1px solid #db3535;
+  }
+  95% {
+    border: 1px solid #db3535;
+  }
   to {
-    transform: scale(3.8);
+    width: 100%;
+    height: 100%;
     opacity: 0;
   }
-}
-@keyframes rotate {
-  to {
-    --angle: 6.26rad;
-  }
-}
-@property --angle {
-  syntax: "<angle>";
-  inherits: true;
-  initial-value: 0rad;
 }/*# sourceMappingURL=index.css.map */
