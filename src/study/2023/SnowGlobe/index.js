@@ -1,11 +1,16 @@
-import { Snow } from "./Snow.js";
 import { Circle } from "./circle.js";
 
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 const globe = document.querySelector(".globe");
-let snow = [];
+
 let circle;
+let isClick = false;
+
+let x = 0;
+let y = 0;
+let vy = 0.1;
+let radius = 0;
 
 const resize = () => {
   const ratio = devicePixelRatio;
@@ -19,38 +24,36 @@ const resize = () => {
   ctx.scale(ratio, ratio);
 
   const circleWidth = innerWidth * (15 / 100);
-
   circle = new Circle(innerWidth / 2, innerHeight / 2, circleWidth);
 
-  snow = [];
   const { top, left, width } = globe.getBoundingClientRect();
-  for (let i = 0; i < 20; i++) {
-    const radius = 10;
-    const x = Math.random() * (width - radius * 2) + (left + radius);
-    const y = top + Math.random() * 150 + radius;
-    const point = {
-      x,
-      y,
-    };
-
-    snow.push(new Snow(x, y, radius));
-  }
+  radius = 20;
+  x = Math.random() * (width - radius * 2) + (left + radius);
+  y = top + radius * 2;
 };
 
 const animate = () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+  y += vy;
+
+  ctx.fillStyle = "red";
+  ctx.beginPath();
+  ctx.arc(x, y, radius, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.closePath();
+
   circle.draw(ctx);
 
-  snow.forEach((s) => {
-    s.update(circle.line);
-    s.draw(ctx);
-  });
-
   requestAnimationFrame(animate);
+};
+
+const onClick = () => {
+  isClick = true;
 };
 
 resize();
 animate();
 
 window.addEventListener("resize", resize);
+window.addEventListener("click", onClick);

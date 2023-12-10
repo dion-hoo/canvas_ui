@@ -12,7 +12,7 @@ export class Raycasting {
       const p2 = this.line[j];
 
       const x =
-        this.point.x - this.point.radius <
+        this.point.x <
         p1.x + ((this.point.y - p1.y) / (p2.y - p1.y)) * (p2.x - p1.x);
 
       const y = this.point.y < p1.y !== this.point.y < p2.y;
