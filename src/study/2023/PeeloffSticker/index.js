@@ -1,15 +1,11 @@
-import { Cover } from "./Cover.js";
-import { Front } from "./Front.js";
+import { Sticker } from "./sticker.js";
 
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
-const mouse = {
-  isDown: false,
-  moveX: 0,
-  moveY: 0,
-};
-
-let cover, front;
+let sticker;
+let isDown = false;
+let moveX = 0;
+let moveY = 0;
 
 const resize = () => {
   const ratio = devicePixelRatio;
@@ -22,50 +18,42 @@ const resize = () => {
 
   ctx.scale(ratio, ratio);
 
-  const width = 400;
-  const height = 220;
-  const x = window.innerWidth * 0.5 - width / 2;
-  const y = window.innerHeight * 0.5 - height / 2;
+  const x = innerWidth * 0.5 - 200;
+  const y = innerHeight * 0.5 - 100;
 
-  const point = [
-    { x: x, y: y },
-    { x: x + width, y: y },
-    { x: x + width, y: y + height },
-    { x: x, y: y + height },
-  ];
-
-  cover = new Cover(point);
-  front = new Front(point);
+  sticker = new Sticker(x, y);
 };
 
 const animate = () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  cover.draw(ctx);
-  front.draw(ctx);
-
-  if (mouse.isDown) {
-    front.update(mouse, ctx);
-  }
+  sticker.draw(ctx);
+  sticker.update(ctx, moveX, moveY);
 
   requestAnimationFrame(animate);
 };
 
-const onDown = () => {
-  mouse.isDown = true;
+resize();
+animate();
+
+const onDown = (event) => {
+  isDown = true;
+
+  moveX = event.clientX;
+  moveY = event.clientY;
 };
 const onMove = (event) => {
-  if (mouse.isDown) {
-    mouse.moveX = event.clientX;
-    mouse.moveY = event.clientY;
+  if (isDown) {
+    moveX = event.clientX;
+    moveY = event.clientY;
   }
 };
 const onUp = () => {
-  mouse.isDown = false;
-};
+  isDown = false;
 
-resize();
-animate();
+  moveX = 0;
+  moveY = 0;
+};
 
 window.addEventListener("pointerdown", onDown);
 window.addEventListener("pointermove", onMove);

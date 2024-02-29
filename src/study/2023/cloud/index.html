@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background: #000;
+      }
+
+      .box {
+        position: absolute;
+        top: calc(50% - 400px);
+        left: calc(50% - 400px);
+        width: 400px;
+        height: 400px;
+        box-shadow: 400px 400px 60px 0 #fff;
+        transform: translate(-50%, -50%);
+        filter: url(#feturbulence);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box"></div>
+    <svg>
+      <defs>
+        <filter id="feturbulence">
+          <feTurbulence
+            class="feturbulence"
+            type="fractalNoise"
+            baseFrequency="0.01 0.01"
+            numOctaves="10"
+            result="turbulence"
+          />
+          <feDisplacementMap in="SourceGraphic" scale="180" />
+        </filter>
+      </defs>
+    </svg>
+
+    <script>
+      const feturbulence = document.querySelector(".feturbulence");
+
+      let frame = 1;
+      const baseFrequency = 0.005;
+      const radian = Math.PI / 180;
+
+      const feturbulenceAnimation = () => {
+        frame += 0.2;
+
+        const x = baseFrequency + Math.cos(frame * radian) * 0.0025;
+        const y = baseFrequency + Math.sin(frame * radian) * 0.0025;
+
+        feturbulence.setAttribute("baseFrequency", `${x} ${y}`);
+
+        requestAnimationFrame(feturbulenceAnimation);
+      };
+
+      feturbulenceAnimation();
+    </script>
+  </body>
+</html>

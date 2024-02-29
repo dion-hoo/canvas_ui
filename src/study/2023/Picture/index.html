@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Picture</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        overflow: hidden;
+      }
+      canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #000;
+      }
+      img {
+        display: none;
+      }
+      video {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      body {
+        &.color-1 {
+          .box {
+            box-shadow: 400px 500px 60px 0 #5c6285;
+          }
+        }
+        &.color-2 {
+          .box {
+            box-shadow: 400px 500px 60px 0 #c3b0a1;
+          }
+        }
+        &.color-3 {
+          .box {
+            box-shadow: 400px 500px 60px 0 #b10796;
+          }
+        }
+        &.color-4 {
+          .box {
+            box-shadow: 400px 500px 60px 0 #d88052;
+          }
+        }
+        &.color-5 {
+          .box {
+            box-shadow: 400px 500px 60px 0 #b8e0e7;
+          }
+        }
+        &.color-6 {
+          .box {
+            box-shadow: 400px 500px 60px 0 #5c696d;
+          }
+        }
+        &.color-7 {
+          .box {
+            box-shadow: 400px 500px 60px 0 #811d1f;
+          }
+        }
+        &.color-8 {
+          .box {
+            box-shadow: 400px 500px 60px 0 #fa9c5a;
+          }
+        }
+        &.color-9 {
+          .box {
+            box-shadow: 400px 500px 60px 0 #5e6c88;
+          }
+        }
+        &.color-10 {
+          .box {
+            box-shadow: 400px 500px 60px 0 #3f484d;
+          }
+        }
+        &.color-11 {
+          .box {
+            box-shadow: 400px 500px 60px 0 #8b75c3;
+          }
+        }
+        &.color-12 {
+          .box {
+            box-shadow: 400px 500px 60px 0 #990102;
+          }
+        }
+        &.color-13 {
+          .box {
+            box-shadow: 400px 500px 60px 0 #eeece8;
+          }
+        }
+      }
+
+      .box {
+        position: absolute;
+        top: calc(81% - 400px);
+        left: calc(50% - 400px);
+        width: 400px;
+        height: 400px;
+        box-shadow: 400px 500px 60px 0 #fff;
+        transform: translate(-50%, -50%);
+        filter: url(#feturbulence);
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      .box1 {
+        top: calc(99% - 400px);
+        left: 5%;
+      }
+
+      .box2 {
+        top: calc(90% - 400px);
+        left: 12%;
+      }
+
+      .box3 {
+        left: 20%;
+      }
+
+      .box4 {
+        left: calc(50% - 700px);
+      }
+
+      .box6 {
+        left: calc(50% - 100px);
+      }
+
+      .box7 {
+        left: 55%;
+      }
+
+      .box8 {
+        top: calc(90% - 400px);
+        left: 64%;
+      }
+
+      .box9 {
+        top: calc(99% - 400px);
+        left: 70%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box box1"></div>
+    <div class="box box2"></div>
+    <div class="box box3"></div>
+    <div class="box box4"></div>
+    <div class="box box5"></div>
+    <div class="box box6"></div>
+    <div class="box box7"></div>
+    <div class="box box8"></div>
+    <div class="box box9"></div>
+    <svg>
+      <defs>
+        <filter id="feturbulence">
+          <feTurbulence
+            class="feturbulence"
+            type="fractalNoise"
+            baseFrequency="0.01 0.01"
+            numOctaves="10"
+            result="turbulence"
+          />
+          <feDisplacementMap in="SourceGraphic" scale="180" />
+        </filter>
+      </defs>
+    </svg>
+    <canvas></canvas>
+    <img class="img" src="./singer/Ed-Sheeran-Photograph.png" alt="" />
+    <img class="img2" src="./singer/shawn-mendes.png" alt="" />
+    <img class="img3" src="./singer/My-Universe.png" alt="" />
+    <img class="img4" src="./singer/justin-bieber.png" alt="" />
+    <img class="img5" src="./singer/harry-styles.png" alt="" />
+    <img class="img6" src="./singer/sam-smith.png" alt="" />
+    <img class="img7" src="./singer/bruno-mars.png" alt="" />
+    <img class="img8" src="./singer/one-republic.png" alt="" />
+    <img class="img9" src="./singer/Lewis-capaldi.png" alt="" />
+    <img class="img10" src="./singer/one-republic2.png" alt="" />
+    <img class="img11" src="./singer/tom-grennan.png" alt="" />
+    <img class="img12" src="./singer/Lewis-capaldi2.png" alt="" />
+    <img class="img13" src="./singer/one-direction.png" alt="" />
+    <!-- <video class="video" autoplay>
+      <source src="./singer/drunk text.mp4" type="video/mp4" />
+    </video> -->
+    <script type="module" src="./index.js"></script>
+    <script>
+      const feturbulence = document.querySelector(".feturbulence");
+      const body = document.querySelector("body");
+
+      let colorIndex = 0;
+      let frame = 1;
+      const baseFrequency = 0.005;
+      const radian = Math.PI / 180;
+
+      const feturbulenceAnimation = () => {
+        frame += colorIndex >= 7 && colorIndex <= 12 ? 1.5 : 0.2;
+
+        const x = baseFrequency + Math.cos(frame * radian) * 0.002;
+        const y = baseFrequency + Math.sin(frame * radian) * 0.002;
+
+        feturbulence.setAttribute("baseFrequency", `${x} ${y}`);
+
+        requestAnimationFrame(feturbulenceAnimation);
+      };
+
+      feturbulenceAnimation();
+
+      body.addEventListener("click", () => {
+        colorIndex++;
+
+        body.classList.remove(...body.classList);
+        body.classList.add(`color-${colorIndex}`);
+      });
+    </script>
+  </body>
+</html>
