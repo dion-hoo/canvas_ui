@@ -1,0 +1,250 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@font-face {
+  font-family: "SpoqaHanSansNeo";
+  src: url("./font/SpoqaHanSansNeo-Bold.otf") format("opentype");
+  font-weight: 800;
+}
+ul {
+  list-style: none;
+}
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 7.5%;
+  height: 60px;
+  z-index: 2;
+  box-sizing: border-box;
+}
+.header::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  -webkit-backdrop-filter: blur(5px);
+          backdrop-filter: blur(5px);
+  background-color: rgba(0, 0, 0, 0.4);
+}
+.header h1 {
+  position: relative;
+  width: 83px;
+  z-index: 2;
+}
+.header h1 img {
+  width: 100%;
+  height: auto;
+}
+.header nav {
+  position: relative;
+  z-index: 2;
+}
+.header nav ul {
+  display: flex;
+  align-items: center;
+}
+.header nav ul li a {
+  color: rgba(255, 255, 255, 0.4);
+  text-decoration: none;
+  padding: 0 8px;
+  font-weight: 800;
+  font-family: SpoqaHanSansNeo;
+}
+.header nav ul li a.active {
+  color: #fff;
+}
+.header button {
+  position: relative;
+  z-index: 2;
+  border: 0;
+  padding: 8px 12px;
+  outline: none;
+  background: #fff;
+  color: #000;
+  border-radius: 8px;
+  font-weight: 800;
+  font-family: SpoqaHanSansNeo;
+  cursor: pointer;
+}
+
+.container > section {
+  height: 260vh;
+}
+.container > section .inner {
+  position: sticky;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  perspective: 2000px;
+  transform-style: preserve-3d;
+  overflow: hidden;
+}
+.container > section p {
+  color: #fff;
+  z-index: 1;
+  font-weight: 800;
+  text-align: center;
+  word-break: keep-all;
+  letter-spacing: -0.3px;
+  font-family: SpoqaHanSansNeo;
+  opacity: 0;
+}
+.container > section p.init-text {
+  opacity: 1;
+}
+.container > section .video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  border-radius: 48px;
+  transform: scale(1.07);
+  overflow: hidden;
+}
+.container > section .video video {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.container .content1 {
+  height: 300vh;
+}
+.container .content1 p {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 64px;
+  line-height: 1.4;
+  transform: translate(-50%, -50%);
+}
+.container .content2 {
+  height: 300vh;
+}
+.container .content2 p {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  color: #000;
+  font-size: 64px;
+  transform: translate(-50%, -50%);
+}
+.container .content2 .video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60%;
+  height: 700px;
+  border-radius: 36px;
+  transform: translateX(-50%);
+  border-radius: 36px;
+  overflow: hidden;
+}
+.container .content3 {
+  height: 290vh;
+}
+.container .content3 .inner {
+  height: 80vh;
+}
+.container .content3 p {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  color: #000;
+  font-size: 64px;
+  transform: translate(-50%, -50%);
+}
+.container .content3 .card-wrap {
+  position: absolute;
+  top: 26%;
+  left: 50%;
+  width: 100%;
+  padding: 0 10%;
+  transform: translate(-50%, 0%);
+}
+.container .content3 .card-list {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 100px 0;
+  overflow: hidden;
+}
+.container .content3 .card-list li {
+  flex: 1;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+.container .content3 .card-list li + li {
+  margin-left: 28px;
+}
+.container .content3 .card-list li.hover button {
+  transform: rotateY(30deg);
+}
+.container .content3 .card-list li.flip button {
+  transform: rotateY(0.5turn);
+}
+.container .content3 .card-list li button {
+  position: relative;
+  width: 400px;
+  height: 560px;
+  outline: none;
+  background: none;
+  border: 0;
+  transition: transform 0.6s ease;
+  transform-style: preserve-3d;
+}
+.container .content3 .card-list li button .back {
+  transform: rotateY(0.5turn);
+}
+.container .content3 .card-list li button .back::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: -1;
+  border-radius: 24px;
+}
+.container .content3 .card-list li button .front {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+.container .content3 .card-list li button .back,
+.container .content3 .card-list li button .front {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backface-visibility: hidden;
+  height: 100%;
+  font-size: 32px;
+  line-height: 1.4;
+  font-weight: 800;
+  font-family: Helvetica;
+  color: #fff;
+  border-radius: 24px;
+  background: url("./img/img-thumb.avif") no-repeat center 0/cover;
+}
+.container .content4 {
+  background-color: #000;
+}/*# sourceMappingURL=index.css.map */
