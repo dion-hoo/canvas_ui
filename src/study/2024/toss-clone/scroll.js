@@ -15,21 +15,21 @@ const setElementStyleOfEffect = ({
   effect,
   multiEffect = false,
 }) => {
-  for (const e in effect) {
-    const properties = effect[e];
+  for (const name in effect) {
+    const properties = effect[name];
 
-    if (e === "transform") {
+    if (name === "transform") {
       for (const property in properties) {
         const result = multiEffect
           ? ratioMultipleValue(firstRatio, secondRatio, properties[property])
           : ratioValue(clampRatio, properties[property]);
 
         if (property === "translate") {
-          target.style[e] = `translate(-50%, calc(-50% + ${result}px)`;
+          target.style[name] = `translate(-50%, calc(-50% + ${result}px)`;
         } else if (property === "rotateX") {
-          target.style[e] = `scale(1.07) rotateX(${result}deg)`;
+          target.style[name] = `rotateX(${result}deg)`;
         } else if (property === "scale") {
-          target.style[e] = `translateX(-50%) scale(${result})`;
+          target.style[name] = `scale(${result})`;
         }
       }
     } else {
@@ -37,7 +37,7 @@ const setElementStyleOfEffect = ({
         ? ratioMultipleValue(firstRatio, secondRatio, properties)
         : ratioValue(clampRatio, properties);
 
-      target.style[e] = result;
+      target.style[name] = result;
     }
   }
 };
@@ -47,7 +47,7 @@ const setElementStyleOfProperty = (section, ratio) => {
     const sectionItem = section[key];
     const { end, start, target, effect } = sectionItem;
 
-    if (typeof start === "object" && typeof end === "object") {
+    if (Array.isArray(start) && Array.isArray(end)) {
       const [firstStart, secondStart] = start;
       const [firstEnd, secondEnd] = end;
 

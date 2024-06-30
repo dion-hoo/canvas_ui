@@ -63,23 +63,24 @@ export const contentInfo = {
   section2: {
     text1: {
       target: document.querySelector(".content2 .text1"),
-      start: 0.05,
-      end: 0.2,
+      start: [0.05, 0.25],
+      end: [0.2, 0.3],
       effect: {
-        opacity: [0, 1],
+        opacity: [0, 1, 1, 0],
         transform: {
-          translate: [0, -60],
+          translate: [0, -60, -60, -120],
         },
       },
     },
 
     video: {
-      target: document.querySelector(".content2 .video"),
-      start: 0.3,
-      end: 0.4,
+      target: document.querySelector(".content2 .video video"),
+      start: 0.27,
+      end: 0.6,
       effect: {
+        opacity: [0, 1],
         transform: {
-          // scale: [2, 1],
+          scale: [1.9, 0.5],
         },
       },
     },
