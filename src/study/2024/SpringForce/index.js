@@ -25,7 +25,8 @@ const resize = () => {
 
   groupSpring = [];
 
-  let hsl = Math.random() * 80;
+  // let hsl = Math.random() * 80;
+  let hsl = 10;
 
   canvas.style.background = `hsl(${hsl}, 60%, 45%)`;
 
