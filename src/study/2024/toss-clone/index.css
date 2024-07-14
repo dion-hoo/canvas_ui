@@ -81,6 +81,7 @@ ul {
 .container > section {
   position: relative;
   height: 260vh;
+  border: 1px solid red;
 }
 .container > section .inner {
   position: sticky;

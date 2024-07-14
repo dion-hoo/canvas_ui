@@ -2,13 +2,13 @@ const canvas = document.querySelector("#canvas");
 const ctx = canvas.getContext("2d");
 const pixel = window.devicePixelRatio;
 
-canvas.width = window.innerWidth * pixel;
-canvas.height = window.innerHeight * pixel;
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
 canvas.style.width = window.innerWidth + "px";
 canvas.style.height = window.innerHeight + "px";
 
-ctx.scale(pixel, pixel);
+// ctx.scale(pixel, pixel);
 
 let polygon = null;
 let isDown = false;

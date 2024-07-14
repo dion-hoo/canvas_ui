@@ -100,7 +100,13 @@ const onScroll = () => {
   }
 
   // 화면 전체 비율
-  const ratio = clamp(currentFrame / frame.clientHeight);
+  let ratio;
+  if (currentScene === contents.length - 1) {
+    ratio = clamp(currentFrame / (frame.clientHeight - innerHeight));
+  } else {
+    ratio = clamp(currentFrame / frame.clientHeight);
+  }
+
   const key = `section${currentScene + 1}`;
 
   // 현재 보이는 section
