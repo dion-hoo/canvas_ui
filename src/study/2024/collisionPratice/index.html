@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Collision</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      @font-face {
+        font-family: "SpoqaHanSansNeo";
+        src: url("../../../assets/font/SpoqaHanSansNeo-Bold.otf")
+          format("opentype");
+        font-weight: 800;
+      }
+
+      .flip {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        font-size: 400px;
+        color: #fff;
+        z-index: 1;
+        font-family: SpoqaHanSansNeo;
+        text-transform: uppercase;
+        transform: translate(-50%, -50%);
+      }
+
+      .active {
+        animation: sacleUp 0.9s 3 linear;
+      }
+
+      canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #000;
+      }
+
+      @keyframes sacleUp {
+        to {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(20);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="flip">
+      <div class="front">Three</div>
+    </div>
+    <canvas></canvas>
+    <script type="module" src="./index.js"></script>
+  </body>
+</html>
