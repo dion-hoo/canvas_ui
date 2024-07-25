@@ -10,18 +10,119 @@
         padding: 0;
       }
 
+      @font-face {
+        font-family: "SpoqaHanSansNeo";
+        src: url("./font/SpoqaHanSansNeo-Bold.otf") format("opentype");
+        font-weight: 800;
+      }
+
+      .wrap {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1;
+        pointer-events: none;
+
+        .text1,
+        .text2,
+        ul > li {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 0;
+          font-size: 5.7em;
+          font-family: SpoqaHanSansNeo;
+          white-space: nowrap;
+          overflow: hidden;
+          text-align: center;
+          font-weight: 800;
+          transform: translate(-50%, -100%);
+        }
+
+        .text1 {
+          animation: typing 1s 1s steps(19) forwards,
+            fadeOut 0.5s 2.8s linear forwards;
+        }
+
+        .text2 {
+          opacity: 0;
+          animation: typing 1s steps(10) forwards,
+            fadeIn 0.5s 4s linear forwards, fadeOut 0.5s 5.8s linear forwards;
+        }
+
+        ul > li {
+          &:nth-child(1) {
+            animation: typing 1s 6.8s steps(15) forwards,
+              fadeIn 0.2s 7.8s linear forwards, fadeOut 0.2s 7.8s forwards;
+          }
+          &:nth-child(2) {
+            animation: typing 1s 7.9s steps(20) forwards,
+              fadeIn 0.2s 7.9s linear forwards, fadeOut 0.2s 8.9s forwards;
+          }
+          &:nth-child(3) {
+            animation: typing 1s 9s steps(15) forwards,
+              fadeIn 0.2s 9s linear forwards, fadeOut 0.2s 10s forwards;
+          }
+          &:nth-child(4) {
+            animation: typing 1s 10.1s steps(20) forwards,
+              fadeIn 0.2s 10.1s linear forwards, fadeOut 0.2s 11.1s forwards;
+          }
+        }
+      }
+
       canvas {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: #000;
+      }
+
+      .image {
+        display: none;
+      }
+
+      @keyframes typing {
+        from {
+          width: 0;
+        }
+        to {
+          width: 100%;
+        }
+      }
+      @keyframes fadeOut {
+        to {
+          opacity: 0;
+        }
+      }
+
+      @keyframes fadeIn {
+        to {
+          opacity: 1;
+        }
       }
     </style>
   </head>
   <body>
+    <div class="wrap">
+      <p class="text1">어떤 페이를 자주 사용하시나요?</p>
+      <p class="text2">아마도..?</p>
+      <ul>
+        <li>삼성페이?</li>
+        <li>카카오페이?</li>
+        <li>토스페이?</li>
+        <li>네이버페이?</li>
+      </ul>
+    </div>
     <canvas></canvas>
+
+    <img src="./toss-symbol.png" alt="" class="toss image" />
+    <img src="./kakaopay-symbol.png" alt="" class="kakaopay image" />
+    <img src="./naver-symbol.svg" alt="" class="naver image" />
+    <img src="./samsung-symbol.svg" alt="" class="samsung image" />
     <script type="module" src="./index.js"></script>
   </body>
 </html>

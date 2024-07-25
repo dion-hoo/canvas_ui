@@ -1,8 +1,9 @@
 export class Stick {
-  constructor(p1, p2, maxLength) {
+  constructor(p1, p2, maxLength, color) {
     this.p1 = p1;
     this.p2 = p2;
     this.maxLength = maxLength;
+    this.color = color;
   }
 
   update() {
@@ -23,7 +24,8 @@ export class Stick {
   }
 
   draw(ctx) {
-    ctx.strokeStyle = "#fff";
+    ctx.strokeStyle = `${this.color}`;
+    ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(this.p1.x, this.p1.y);
     ctx.lineTo(this.p2.x, this.p2.y);
