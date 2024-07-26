@@ -1,12 +1,12 @@
 import { Flower } from "./flower.js";
 
 export class Stem {
-  constructor(index, x, y, size, image, direction, lineWidth, wind) {
+  constructor(index, x, y, size, image, direction, lineWidth, curve, wind) {
     this.index = index;
     this.startX = x;
     this.startY = y;
 
-    this.endX = x;
+    this.endX = x + (Math.random() * 200 - 100);
     this.endY = y - size;
     this.spin = 0;
 
@@ -17,7 +17,7 @@ export class Stem {
     this.time2 = 0;
     this.isReversed = false;
 
-    this.controlPoint = size * 0.2 * direction;
+    this.controlPoint = curve * direction;
     this.isEnd = false;
 
     this.speed = 0.03;
@@ -91,7 +91,7 @@ export class Stem {
         if (inputValue === "wind") {
           this.spin += this.wind.x;
 
-          const windX = Math.sin(this.index + this.spin) * 2;
+          const windX = Math.sin(this.index + this.spin) * 3;
           const centerWindX = Math.sin(this.index + this.spin) * 0.2;
           this.endY += windX;
           this.centerX += centerWindX;

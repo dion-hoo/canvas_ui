@@ -1,9 +1,11 @@
 import { Stem } from "./stem.js";
+import { Petal } from "./petal.js";
 
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 const input = document.querySelector(".input");
 let stem = [];
+let petal = [];
 const mouse = {
   isDown: false,
   isDowned: false,
@@ -17,6 +19,13 @@ const wind = {
   x: 0.3,
   y: 0,
 };
+
+let fps = 5;
+let fpsTime = 1000 / fps;
+let currentTime = 0;
+
+const petalImage = new Image();
+petalImage.src = "./petal.png";
 
 const resize = () => {
   const ratio = 1; // devicePixelRatio;
@@ -32,9 +41,10 @@ const resize = () => {
   modifiedImage = null;
   inputValue = null;
 
-  changeImageColor(168, 47, 61);
+  changeImageColor(234, 37, 72);
 
   stem = [];
+  petal = [];
 };
 
 const changeImageColor = (r, g, b) => {
@@ -71,26 +81,67 @@ const changeImageColor = (r, g, b) => {
   };
 };
 
-const animate = () => {
+const animate = (time) => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+  if (!currentTime) {
+    currentTime = time;
+  }
+
+  const now = time - currentTime;
+
+  if (now > fpsTime) {
+    for (let i = 0; i < 1; i++) {
+      const radius = 30;
+      const x = Math.random() * innerWidth;
+      const y = -Math.random() * radius - radius * 2;
+
+      petal.push(new Petal(petalImage, x, y, radius));
+    }
+
+    currentTime = time;
+  }
+
   if (mouse.isDown && !mouse.isDowned) {
-    const length = Math.random() * 6 + 3;
+    const length = Math.random() * 3 + 1;
     for (let i = 0; i < length; i++) {
-      const x = mouse.x + Math.random() * 200 - 100;
+      const x = mouse.x;
       const y = innerHeight;
       const size =
-        Math.random() * (innerHeight - innerHeight * 0.7) + innerHeight * 0.1;
-      const direction = Math.random() > 0.5 ? 1 : -1;
+        Math.random() * (innerHeight - innerHeight * 0.85) + innerHeight * 0.1;
+
       const lineWidth = Math.random() * 2 + 2;
+      const curve = Math.random() * 5 + 3;
+      const direction = Math.random() > 0.5 ? curve : -curve;
 
       mouse.isDowned = true;
 
       stem.push(
-        new Stem(i, x, y, size, modifiedImage, direction, lineWidth, wind)
+        new Stem(
+          i,
+          x,
+          y,
+          size,
+          modifiedImage,
+          direction,
+          lineWidth,
+          curve,
+          wind
+        )
       );
     }
   }
+
+  petal.forEach((p) => {
+    p.update(inputValue);
+    p.draw(ctx);
+
+    if (p.isEnd) {
+      const index = petal.indexOf(p);
+
+      petal.splice(index, 1);
+    }
+  });
 
   stem.forEach((s) => {
     s.draw(ctx, inputValue);
@@ -101,19 +152,19 @@ const animate = () => {
 
 const color = [
   {
+    red: 255,
+    green: 204,
+    blue: 178,
+  },
+  {
     red: 230,
     green: 230,
     blue: 250,
   },
   {
-    red: 255,
-    green: 255,
-    blue: 225,
-  },
-  {
-    red: 168,
-    green: 47,
-    blue: 61,
+    red: 234,
+    green: 37,
+    blue: 72,
   },
 ];
 

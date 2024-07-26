@@ -21,7 +21,7 @@ export class Flower {
 
     if (inputValue === "wind") {
       this.spin += this.wind.x;
-      const radian = Math.sin(this.index + this.spin) * 0.1;
+      const radian = Math.sin(this.index + this.spin) * 0.2;
       ctx.rotate(radian);
     }
 
