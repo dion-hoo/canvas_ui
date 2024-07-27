@@ -1,5 +1,5 @@
 export class Circle {
-  constructor(fruitName, x, y, radius, color) {
+  constructor(fruitName, x, y, radius, color, fontColor) {
     this.fruitName = fruitName;
     this.x = x;
     this.y = y;
@@ -11,6 +11,7 @@ export class Circle {
     this.centerY = 0;
     this.radius = radius;
     this.color = color;
+    this.fontColor = fontColor;
     this.force = {
       x: 0,
       y: 0.3,
@@ -22,6 +23,7 @@ export class Circle {
     this.rotate = 0;
     this.rotateVelocity = 0;
     this.isGrab = false;
+    this.lineWidth = 20;
   }
 
   update(time, mouse) {
@@ -63,7 +65,7 @@ export class Circle {
       const distance = dx * dx + dy * dy;
 
       const dist = Math.sqrt(distance);
-      const length = this.radius + target.radius;
+      const length = this.radius + target.radius + this.lineWidth;
       const minDistance = length * length;
 
       if (distance < minDistance) {
@@ -128,20 +130,20 @@ export class Circle {
   }
 
   constraints() {
-    if (this.x < this.radius) {
-      this.x = this.radius;
+    if (this.x < this.radius + this.lineWidth / 2) {
+      this.x = this.radius + this.lineWidth / 2;
       this.oldX = this.x + this.vx / 2;
-    } else if (this.x > innerWidth - this.radius) {
-      this.x = innerWidth - this.radius;
+    } else if (this.x > innerWidth - this.radius - this.lineWidth / 2) {
+      this.x = innerWidth - this.radius - this.lineWidth / 2;
       this.oldX = this.x + this.vx / 2;
     }
 
-    if (this.y < this.radius) {
-      this.y = this.radius;
-      this.oldY = this.y;
-    } else if (this.y > innerHeight - this.radius) {
-      this.y = innerHeight - this.radius;
-      this.oldY = this.y;
+    if (this.y < this.radius - this.lineWidth / 2) {
+      this.y = this.radius - this.lineWidth / 2;
+      this.oldY = this.y + this.vy * 0.1;
+    } else if (this.y > innerHeight - this.radius - this.lineWidth / 2) {
+      this.y = innerHeight - this.radius - this.lineWidth / 2;
+      this.oldY = this.y + this.vy * 0.1;
     }
   }
 
@@ -151,25 +153,28 @@ export class Circle {
     ctx.translate(this.x, this.y);
     ctx.rotate(this.rotate);
 
-    ctx.fillStyle = this.color;
+    ctx.fillStyle = "#fff";
+    ctx.strokeStyle = this.color;
+    ctx.lineWidth = this.lineWidth;
     ctx.beginPath();
     ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+    ctx.stroke();
     ctx.fill();
     ctx.closePath();
 
     const fontSize = this.radius;
     const font = ctx.measureText(this.index);
 
-    ctx.font = `600 ${fontSize * 1.2}px Hind`;
+    ctx.font = `600 ${fontSize * 1.6}px Hind`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillStyle = "#323232";
+    ctx.fillStyle = this.fontColor;
     ctx.fillText(
       this.fruitName,
       (this.radius - fontSize) / 2,
       font.actualBoundingBoxAscent +
         font.actualBoundingBoxDescent +
-        (this.radius - fontSize) / 2
+        fontSize / 7
     );
 
     ctx.restore();

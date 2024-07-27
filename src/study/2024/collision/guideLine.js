@@ -9,7 +9,7 @@ export class GuideLine {
   }
 
   draw(ctx) {
-    ctx.strokeStyle = "#000";
+    ctx.strokeStyle = "#c74b3f";
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(this.x, this.y);

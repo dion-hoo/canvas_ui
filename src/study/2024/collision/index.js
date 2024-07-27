@@ -1,5 +1,6 @@
 import { Circle } from "./circle.js";
 import { GuideLine } from "./guideLine.js";
+import { Spark } from "./spark.js";
 
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
@@ -11,73 +12,87 @@ const mouse = {
   y: 0,
 };
 let guideLine = null;
+let spark = null;
 
-const defaultSize = innerWidth * 0.027;
+const defaultSize = innerWidth * 0.03;
 const numberTextList = [
   {
     name: "A",
     radius: defaultSize,
-    color: "rgba(255, 182, 193, 1.0)",
+    color: "#dfc74b",
+    fontColor: "#f2e08c",
   },
   {
     name: "B",
     radius: defaultSize,
-    color: "rgba(173, 216, 230, 1.0)",
+    color: "#84b865",
+    fontColor: "#acc988",
   },
   {
     name: "C",
     radius: defaultSize,
-    color: "rgba(152, 251, 152, 1.0)",
+    color: "#6ac4b6",
+    fontColor: "#90e0d7",
   },
   {
     name: "D",
     radius: defaultSize,
-    color: "rgba(230, 230, 250, 1.0)",
+    color: "#ef9998",
+    fontColor: "#f6b0ae",
   },
   {
     name: "E",
     radius: defaultSize,
-    color: "rgba(240, 128, 128, 1.0)",
+    color: "#cda5e3",
+    fontColor: "#e3c7f0",
   },
   {
     name: "F",
     radius: defaultSize,
-    color: "rgba(245, 255, 250, 1.0)",
+    color: "#76aed1",
+    fontColor: "#a0cce5",
   },
   {
     name: "G",
     radius: defaultSize,
-    color: "rgba(255, 228, 225, 1.0)",
+    color: "#c5493d",
+    fontColor: "#d56962",
   },
   {
     name: "H",
     radius: defaultSize,
-    color: "rgba(255, 255, 224, 1.0)",
+    color: "#2e2f6f",
+    fontColor: "#515394",
   },
   {
     name: "I",
     radius: defaultSize,
-    color: "rgba(255, 218, 185, 1.0)",
+    color: "#cb912e",
+    fontColor: "#e2ae61",
   },
   {
     name: "J",
     radius: defaultSize,
-    color: "rgba(135, 206, 235, 1.0)",
+    color: "#773a1d",
+    fontColor: "#93554a",
   },
   {
     name: "K",
     radius: defaultSize,
-    color: "rgba(176, 224, 230, 1.0)",
+    color: "#817aa3",
+    fontColor: "#a29dbb",
   },
   {
     name: "L",
     radius: defaultSize,
-    color: "rgba(255, 218, 185, 1.0)",
+    color: "#3f6e95",
+    fontColor: "#6186b1",
   },
   {
     name: "M",
     radius: defaultSize,
-    color: "rgba(255, 182, 193, 1.0)",
+    color: "#9ba23a",
+    fontColor: "#b7c55e",
   },
 ];
 
@@ -101,7 +116,6 @@ const resize = () => {
   canvas.style.height = `${innerHeight}px`;
 
   circles = [];
-
   guideLine = new GuideLine(innerWidth * 0.5, innerHeight * 0.2);
 };
 
@@ -118,11 +132,19 @@ const animate = () => {
     const numberTextName = numberText.name;
     const radius = numberText.radius;
     const color = numberText.color;
+    const fontColor = numberText.fontColor;
 
     for (let i = 0; i < 1; i++) {
       const x = mouse.x;
       const y = innerHeight * 0.2;
-      const newCircle = new Circle(numberTextName, x, y, radius, color);
+      const newCircle = new Circle(
+        numberTextName,
+        x,
+        y,
+        radius,
+        color,
+        fontColor
+      );
 
       newCircle.isGrab = true;
 
@@ -139,19 +161,23 @@ const animate = () => {
     c.draw(ctx);
 
     if (c.isFusion) {
+      spark = new Spark(c.centerX, c.centerY - c.centerY * 0.03);
+
       const index = Math.floor(Math.random() * numberTextList.length);
       const numberText = numberTextList[index];
 
       const numberTextName = numberText.name;
       const radius = numberText.radius;
       const color = numberText.color;
+      const fontColor = numberText.fontColor;
 
       const newCircle = new Circle(
         numberTextName,
         c.centerX,
         c.centerY,
-        radius * 1.2,
-        color
+        radius * 2,
+        color,
+        fontColor
       );
 
       circles.push(newCircle);
@@ -163,6 +189,15 @@ const animate = () => {
       circles.splice(index, 1);
     }
   });
+
+  if (spark) {
+    spark.update();
+    spark.draw(ctx);
+
+    if (spark.isEnd) {
+      spark = null;
+    }
+  }
 
   requestAnimationFrame(animate);
 };
