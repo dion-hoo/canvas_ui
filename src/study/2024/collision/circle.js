@@ -1,96 +1,159 @@
 export class Circle {
-  constructor(x, y, radius, color) {
+  constructor(fruitName, x, y, radius, imageSrc) {
+    this.fruitName = fruitName;
     this.x = x;
     this.y = y;
-    this.radius = radius;
-    this.color = color;
-    this.mass = 0.5;
-
+    this.oldX = x;
+    this.oldY = y;
     this.vx = 0;
     this.vy = 0;
-    this.damping = 0.92;
+    this.centerX = 0;
+    this.centerY = 0;
+    this.radius = radius;
+    this.force = {
+      x: 0,
+      y: 0.8,
+    };
+    this.mass = radius * 0.3;
+    this.isFusion = false;
+    this.isCollision = false;
+
+    this.rotate = 0;
+    this.rotateVelocity = 0;
+
+    this.image = new Image();
+    this.image.src = imageSrc;
   }
 
-  applyForce(force) {
-    this.vx += force.x;
-    this.vy += force.y;
+  update(time) {
+    this.vx = this.x - this.oldX;
+    this.vy = this.y - this.oldY;
+
+    this.oldX = this.x;
+    this.oldY = this.y;
+
+    const ax = this.force.x / 1;
+    const ay = this.force.y / 1;
+
+    this.x += this.vx + ax * time * time;
+    this.y += this.vy + ay * time * time;
+
+    this.rotateVelocity = Math.min(this.rotateVelocity, 0.9);
+
+    this.rotate += this.rotateVelocity;
+
+    this.rotate *= 0.89;
   }
 
-  update() {
-    this.x += this.vx;
-    this.y += this.vy;
-  }
+  collision(circle) {
+    for (let i = 0; i < circle.length; i++) {
+      const target = circle[i];
 
-  detectWindow() {
-    if (this.x < this.radius) {
-      this.vx = Math.abs(this.vx) * this.damping;
-      this.x = this.radius;
-    } else if (this.x > innerWidth - this.radius) {
-      this.vx = Math.abs(this.vx) * -this.damping;
-      this.x = innerWidth - this.radius;
-    }
-
-    if (this.y < this.radius) {
-      this.vy = Math.abs(this.vy) * this.damping;
-      this.y = this.radius;
-    } else if (this.y > innerHeight - this.radius) {
-      this.vy = Math.abs(this.vy) * -this.damping;
-      this.y = innerHeight - this.radius;
-    }
-  }
-
-  collision(object) {
-    for (let i = 0; i < object.length; i++) {
-      const circle = object[i];
-
-      if (this === circle) {
+      if (this === target) {
         continue;
       }
 
-      const dx = circle.x - this.x;
-      const dy = circle.y - this.y;
+      const dx = target.x - this.x;
+      const dy = target.y - this.y;
       const distance = dx * dx + dy * dy;
-      const threshold =
-        (this.radius + circle.radius) * (this.radius + circle.radius);
 
-      if (distance < threshold) {
-        // 충돌 할 방향 구하기
-        const normalized = {
-          x: dx / Math.sqrt(distance),
-          y: dy / Math.sqrt(distance),
+      const dist = Math.sqrt(distance);
+      const length = this.radius + target.radius;
+      const minDistance = length * length;
+
+      if (distance < minDistance) {
+        const diff = length - dist;
+        const percent = diff / dist / 2;
+
+        let tx = dx * percent;
+        let ty = dy * percent;
+
+        const maxMovement = 2;
+        tx = Math.sign(tx) * Math.min(Math.abs(tx), maxMovement);
+        ty = Math.sign(ty) * Math.min(Math.abs(ty), maxMovement);
+
+        this.x -= tx;
+        this.y -= ty;
+
+        target.x += tx;
+        target.y += ty;
+
+        // 회전
+        const nomarlized = {
+          x: dx / dist,
+          y: dy / dist,
         };
-
-        // 충돌 할 속도 구하기
-        // 충돌 속도에 현재 물체의 속도가 어떻게 영향이 받는지 보려면 충돌 방향과 반대 방향을 구한다.
         const relativeVelocity = {
-          x: this.vx - circle.vx,
-          y: this.vy - circle.vy,
+          x: this.vx - target.vx,
+          y: this.vy - target.vy,
         };
-        let speed =
-          relativeVelocity.x * normalized.x + relativeVelocity.y * normalized.y;
 
-        speed *= Math.min(this.damping, circle.damping);
+        let rotationalSpeed =
+          relativeVelocity.x * nomarlized.x + relativeVelocity.y * nomarlized.y;
 
-        if (speed < 0) {
-          continue;
+        const crossProduct =
+          relativeVelocity.x * nomarlized.y - relativeVelocity.y * nomarlized.x;
+
+        if (rotationalSpeed > 0) {
+          if (crossProduct > 0) {
+            // 반시계방향
+            this.rotateVelocity += rotationalSpeed / this.mass;
+            target.rotateVelocity -= rotationalSpeed / target.mass;
+          } else {
+            this.rotateVelocity -= rotationalSpeed / this.mass;
+            target.rotateVelocity += rotationalSpeed / target.mass;
+          }
         }
 
-        const impulse = (speed * 1.2) / (this.mass + circle.mass);
+        const isSameColor = this.fruitName === target.fruitName;
 
-        this.vx -= impulse * circle.mass * normalized.x;
-        this.vy -= impulse * circle.mass * normalized.y;
-        circle.vx += impulse * this.mass * normalized.x;
-        circle.vy += impulse * this.mass * normalized.y;
+        if (isSameColor) {
+          this.centerX = (this.x + target.x) / 2;
+          this.centerY = (this.y + target.y) / 2;
+
+          this.isFusion = true;
+        }
+
+        if (isSameColor) {
+          this.isCollision = true;
+          target.isCollision = true;
+        }
       }
+    }
+  }
+
+  constraints() {
+    if (this.x < this.radius) {
+      this.x = this.radius;
+      this.oldX = this.x + this.vx / 2;
+    } else if (this.x > innerWidth - this.radius) {
+      this.x = innerWidth - this.radius;
+      this.oldX = this.x + this.vx / 2;
+    }
+
+    if (this.y < this.radius) {
+      this.y = this.radius;
+      this.oldY = this.y;
+    } else if (this.y > innerHeight - this.radius) {
+      this.y = innerHeight - this.radius;
+      this.oldY = this.y;
     }
   }
 
   draw(ctx) {
-    ctx.fillStyle = `hsl(${this.color}, 100%, 50%)`;
+    ctx.save();
 
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.closePath();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.rotate);
+
+    ctx.drawImage(
+      this.image,
+      -this.radius,
+      -this.radius,
+      this.radius * 2,
+      this.radius * 2
+    );
+
+    ctx.restore();
   }
 }
