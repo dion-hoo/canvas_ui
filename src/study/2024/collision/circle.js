@@ -1,5 +1,5 @@
 export class Circle {
-  constructor(fruitName, x, y, radius, imageSrc) {
+  constructor(fruitName, x, y, radius, color) {
     this.fruitName = fruitName;
     this.x = x;
     this.y = y;
@@ -10,9 +10,10 @@ export class Circle {
     this.centerX = 0;
     this.centerY = 0;
     this.radius = radius;
+    this.color = color;
     this.force = {
       x: 0,
-      y: 0.8,
+      y: 0.3,
     };
     this.mass = radius * 0.3;
     this.isFusion = false;
@@ -20,29 +21,33 @@ export class Circle {
 
     this.rotate = 0;
     this.rotateVelocity = 0;
-
-    this.image = new Image();
-    this.image.src = imageSrc;
+    this.isGrab = false;
   }
 
-  update(time) {
-    this.vx = this.x - this.oldX;
-    this.vy = this.y - this.oldY;
+  update(time, mouse) {
+    if (this.isGrab) {
+      this.x = mouse.x;
 
-    this.oldX = this.x;
-    this.oldY = this.y;
+      this.oldX = this.x;
+    } else {
+      this.vx = this.x - this.oldX;
+      this.vy = this.y - this.oldY;
 
-    const ax = this.force.x / 1;
-    const ay = this.force.y / 1;
+      this.oldX = this.x;
+      this.oldY = this.y;
 
-    this.x += this.vx + ax * time * time;
-    this.y += this.vy + ay * time * time;
+      const ax = this.force.x / 1;
+      const ay = this.force.y / 1;
 
-    this.rotateVelocity = Math.min(this.rotateVelocity, 0.9);
+      this.x += this.vx + ax * time * time;
+      this.y += this.vy + ay * time * time;
 
-    this.rotate += this.rotateVelocity;
+      this.rotateVelocity = Math.min(this.rotateVelocity, 0.9);
 
-    this.rotate *= 0.89;
+      this.rotate += this.rotateVelocity;
+
+      this.rotate *= 0.89;
+    }
   }
 
   collision(circle) {
@@ -146,12 +151,25 @@ export class Circle {
     ctx.translate(this.x, this.y);
     ctx.rotate(this.rotate);
 
-    ctx.drawImage(
-      this.image,
-      -this.radius,
-      -this.radius,
-      this.radius * 2,
-      this.radius * 2
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+    ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.closePath();
+
+    const fontSize = this.radius;
+    const font = ctx.measureText(this.index);
+
+    ctx.font = `600 ${fontSize * 1.2}px Hind`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "#323232";
+    ctx.fillText(
+      this.fruitName,
+      (this.radius - fontSize) / 2,
+      font.actualBoundingBoxAscent +
+        font.actualBoundingBoxDescent +
+        (this.radius - fontSize) / 2
     );
 
     ctx.restore();

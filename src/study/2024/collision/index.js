@@ -1,82 +1,97 @@
 import { Circle } from "./circle.js";
+import { GuideLine } from "./guideLine.js";
 
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 let circles = [];
 const mouse = {
   isDown: false,
+  isDowned: false,
   x: 0,
   y: 0,
 };
+let guideLine = null;
 
-const defaultSize = innerWidth * 0.06;
-const fruits = [
+const defaultSize = innerWidth * 0.027;
+const numberTextList = [
   {
-    name: "south-korea",
+    name: "A",
     radius: defaultSize,
-    imageSrc: "./flags/south-korea.png",
+    color: "rgba(255, 182, 193, 1.0)",
   },
   {
-    name: "micronesia",
+    name: "B",
     radius: defaultSize,
-    imageSrc: "./flags/micronesia.png",
+    color: "rgba(173, 216, 230, 1.0)",
   },
   {
-    name: "canada",
+    name: "C",
     radius: defaultSize,
-    imageSrc: "./flags/canada.png",
+    color: "rgba(152, 251, 152, 1.0)",
   },
   {
-    name: "germany",
+    name: "D",
     radius: defaultSize,
-    imageSrc: "./flags/germany.png",
+    color: "rgba(230, 230, 250, 1.0)",
   },
   {
-    name: "greece",
+    name: "E",
     radius: defaultSize,
-    imageSrc: "./flags/greece.png",
+    color: "rgba(240, 128, 128, 1.0)",
   },
   {
-    name: "japan",
+    name: "F",
     radius: defaultSize,
-    imageSrc: "./flags/japan.png",
+    color: "rgba(245, 255, 250, 1.0)",
   },
   {
-    name: "vatican-city",
+    name: "G",
     radius: defaultSize,
-    imageSrc: "./flags/vatican-city.png",
+    color: "rgba(255, 228, 225, 1.0)",
   },
   {
-    name: "brazil",
+    name: "H",
     radius: defaultSize,
-    imageSrc: "./flags/brazil.png",
+    color: "rgba(255, 255, 224, 1.0)",
   },
   {
-    name: "qatar",
+    name: "I",
     radius: defaultSize,
-    imageSrc: "./flags/qatar.png",
+    color: "rgba(255, 218, 185, 1.0)",
   },
   {
-    name: "ukraine",
+    name: "J",
     radius: defaultSize,
-    imageSrc: "./flags/ukraine.png",
+    color: "rgba(135, 206, 235, 1.0)",
   },
   {
-    name: "united-kingdom",
+    name: "K",
     radius: defaultSize,
-    imageSrc: "./flags/united-kingdom.png",
+    color: "rgba(176, 224, 230, 1.0)",
   },
   {
-    name: "united-states",
+    name: "L",
     radius: defaultSize,
-    imageSrc: "./flags/united-states.png",
+    color: "rgba(255, 218, 185, 1.0)",
   },
   {
-    name: "albania",
+    name: "M",
     radius: defaultSize,
-    imageSrc: "./flags/albania.png",
+    color: "rgba(255, 182, 193, 1.0)",
   },
 ];
+
+const init = () => {
+  WebFont.load({
+    google: {
+      families: ["Hind:500"],
+    },
+    fontactive: () => {
+      resize();
+      animate();
+    },
+  });
+};
 
 const resize = () => {
   canvas.width = innerWidth;
@@ -86,49 +101,57 @@ const resize = () => {
   canvas.style.height = `${innerHeight}px`;
 
   circles = [];
+
+  guideLine = new GuideLine(innerWidth * 0.5, innerHeight * 0.2);
 };
 
 const animate = () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  if (mouse.isDown) {
-    const index = Math.floor(Math.random() * fruits.length);
-    const fruit = fruits[index];
+  guideLine.update(mouse);
+  guideLine.draw(ctx);
 
-    const fruitName = fruit.name;
-    const radius = fruit.radius;
-    const imageSrc = fruit.imageSrc;
+  if (mouse.isDown && !mouse.isDowned) {
+    const index = Math.floor(Math.random() * numberTextList.length);
+    const numberText = numberTextList[index];
+
+    const numberTextName = numberText.name;
+    const radius = numberText.radius;
+    const color = numberText.color;
 
     for (let i = 0; i < 1; i++) {
       const x = mouse.x;
-      const y = mouse.y;
+      const y = innerHeight * 0.2;
+      const newCircle = new Circle(numberTextName, x, y, radius, color);
 
-      circles.push(new Circle(fruitName, x, y, radius, imageSrc));
+      newCircle.isGrab = true;
+
+      circles.push(newCircle);
     }
 
-    mouse.isDown = false;
+    mouse.isDowned = true;
   }
 
   circles.forEach((c) => {
-    c.update(1);
+    c.update(1, mouse);
     c.constraints();
     c.collision(circles);
     c.draw(ctx);
 
     if (c.isFusion) {
-      const index = Math.floor(Math.random() * fruits.length);
-      const fruit = fruits[index];
+      const index = Math.floor(Math.random() * numberTextList.length);
+      const numberText = numberTextList[index];
 
-      const fruitName = fruit.name;
-      const radius = fruit.radius;
-      const imageSrc = fruit.imageSrc;
+      const numberTextName = numberText.name;
+      const radius = numberText.radius;
+      const color = numberText.color;
 
       const newCircle = new Circle(
-        fruitName,
+        numberTextName,
         c.centerX,
         c.centerY,
-        radius * 2,
-        imageSrc
+        radius * 1.2,
+        color
       );
 
       circles.push(newCircle);
@@ -159,12 +182,17 @@ const onMove = (event) => {
 
 const onUp = () => {
   mouse.isDown = false;
-};
+  mouse.isDowned = false;
 
-resize();
-animate();
+  circles.forEach((c) => {
+    c.isGrab = false;
+  });
+};
 
 window.addEventListener("pointerdown", onDown);
 window.addEventListener("pointermove", onMove);
 window.addEventListener("pointerup", onUp);
 window.addEventListener("resize", resize);
+window.onload = () => {
+  init();
+};
