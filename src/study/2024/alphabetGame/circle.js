@@ -1,6 +1,7 @@
 export class Circle {
-  constructor(fruitName, x, y, radius, color, fontColor) {
-    this.fruitName = fruitName;
+  constructor(index, alphabet, x, y, radius, color, fontColor) {
+    this.index = index;
+    this.alphabet = alphabet;
     this.x = x;
     this.y = y;
     this.oldX = x;
@@ -23,7 +24,7 @@ export class Circle {
     this.rotate = 0;
     this.rotateVelocity = 0;
     this.isGrab = false;
-    this.lineWidth = 20;
+    this.lineWidth = 15;
   }
 
   update(time, mouse) {
@@ -112,7 +113,11 @@ export class Circle {
           }
         }
 
-        const isSameColor = this.fruitName === target.fruitName;
+        if (this.alphabet === "M") {
+          return;
+        }
+
+        const isSameColor = this.alphabet === target.alphabet;
 
         if (isSameColor) {
           this.centerX = (this.x + target.x) / 2;
@@ -143,7 +148,7 @@ export class Circle {
       this.oldY = this.y + this.vy * 0.1;
     } else if (this.y > innerHeight - this.radius - this.lineWidth / 2) {
       this.y = innerHeight - this.radius - this.lineWidth / 2;
-      this.oldY = this.y + this.vy * 0.1;
+      this.oldY = this.y + this.vy * 0.3;
     }
   }
 
@@ -153,8 +158,28 @@ export class Circle {
     ctx.translate(this.x, this.y);
     ctx.rotate(this.rotate);
 
+    if (this.alphabet === "M") {
+      ctx.shadowColor = "rgba(255, 255, 255, 0.5)";
+      ctx.shadowBlur = 20;
+
+      ctx.globalCompositeOperation = "lighter";
+
+      const gradient = ctx.createLinearGradient(0, 0, this.radius, this.radius);
+      gradient.addColorStop(0, "red");
+      gradient.addColorStop(1 / 6, "orange");
+      gradient.addColorStop(2 / 6, "yellow");
+      gradient.addColorStop(3 / 6, "green");
+      gradient.addColorStop(4 / 6, "blue");
+      gradient.addColorStop(5 / 6, "indigo");
+      gradient.addColorStop(1, "violet");
+
+      ctx.strokeStyle = gradient;
+    } else {
+      ctx.strokeStyle = this.color;
+    }
+
     ctx.fillStyle = "#fff";
-    ctx.strokeStyle = this.color;
+
     ctx.lineWidth = this.lineWidth;
     ctx.beginPath();
     ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
@@ -170,7 +195,7 @@ export class Circle {
     ctx.textBaseline = "middle";
     ctx.fillStyle = this.fontColor;
     ctx.fillText(
-      this.fruitName,
+      this.alphabet,
       (this.radius - fontSize) / 2,
       font.actualBoundingBoxAscent +
         font.actualBoundingBoxDescent +

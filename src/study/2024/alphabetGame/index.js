@@ -1,8 +1,8 @@
 import { Circle } from "./circle.js";
 import { GuideLine } from "./guideLine.js";
-import { Spark } from "./spark.js";
+import { Boom } from "./boom.js";
 
-const canvas = document.querySelector("canvas");
+const canvas = document.querySelector(".alphabet-canvas");
 const ctx = canvas.getContext("2d");
 let circles = [];
 const mouse = {
@@ -12,10 +12,10 @@ const mouse = {
   y: 0,
 };
 let guideLine = null;
-let spark = null;
+let boom = null;
 
-const defaultSize = innerWidth * 0.03;
-const numberTextList = [
+const defaultSize = innerWidth * 0.025;
+const alphabetTextList = [
   {
     name: "A",
     radius: defaultSize,
@@ -24,77 +24,78 @@ const numberTextList = [
   },
   {
     name: "B",
-    radius: defaultSize,
+    radius: defaultSize * 1.1,
     color: "#84b865",
     fontColor: "#acc988",
   },
   {
     name: "C",
-    radius: defaultSize,
+    radius: defaultSize * 1.15,
     color: "#6ac4b6",
     fontColor: "#90e0d7",
   },
   {
     name: "D",
-    radius: defaultSize,
+    radius: defaultSize * 1.2,
     color: "#ef9998",
     fontColor: "#f6b0ae",
   },
   {
     name: "E",
-    radius: defaultSize,
+    radius: defaultSize * 1.25,
     color: "#cda5e3",
     fontColor: "#e3c7f0",
   },
   {
     name: "F",
-    radius: defaultSize,
+    radius: defaultSize * 1.3,
     color: "#76aed1",
     fontColor: "#a0cce5",
   },
   {
     name: "G",
-    radius: defaultSize,
+    radius: defaultSize * 1.35,
     color: "#c5493d",
     fontColor: "#d56962",
   },
   {
     name: "H",
-    radius: defaultSize,
+    radius: defaultSize * 1.6,
     color: "#2e2f6f",
     fontColor: "#515394",
   },
   {
     name: "I",
-    radius: defaultSize,
+    radius: defaultSize * 1.7,
     color: "#cb912e",
     fontColor: "#e2ae61",
   },
   {
     name: "J",
-    radius: defaultSize,
+    radius: defaultSize * 1.8,
     color: "#773a1d",
     fontColor: "#93554a",
   },
   {
     name: "K",
-    radius: defaultSize,
+    radius: defaultSize * 1.9,
     color: "#817aa3",
     fontColor: "#a29dbb",
   },
   {
     name: "L",
-    radius: defaultSize,
+    radius: defaultSize * 2,
     color: "#3f6e95",
     fontColor: "#6186b1",
   },
-  {
-    name: "M",
-    radius: defaultSize,
-    color: "#9ba23a",
-    fontColor: "#b7c55e",
-  },
 ];
+
+const completedAlphabet = {
+  name: "M",
+  radius: defaultSize * 3,
+  color: "red",
+  fontColor: "#b7c55e",
+};
 
 const init = () => {
   WebFont.load({
@@ -126,19 +127,20 @@ const animate = () => {
   guideLine.draw(ctx);
 
   if (mouse.isDown && !mouse.isDowned) {
-    const index = Math.floor(Math.random() * numberTextList.length);
-    const numberText = numberTextList[index];
+    const index = Math.floor(Math.random() * alphabetTextList.length);
+    const alphabetText = alphabetTextList[index];
 
-    const numberTextName = numberText.name;
-    const radius = numberText.radius;
-    const color = numberText.color;
-    const fontColor = numberText.fontColor;
+    const alphabetTextName = alphabetText.name;
+    const radius = alphabetText.radius;
+    const color = alphabetText.color;
+    const fontColor = alphabetText.fontColor;
 
     for (let i = 0; i < 1; i++) {
       const x = mouse.x;
       const y = innerHeight * 0.2;
       const newCircle = new Circle(
-        numberTextName,
+        index,
+        alphabetTextName,
         x,
         y,
         radius,
@@ -161,21 +163,28 @@ const animate = () => {
     c.draw(ctx);
 
     if (c.isFusion) {
-      spark = new Spark(c.centerX, c.centerY - c.centerY * 0.03);
+      boom = new Boom(c.centerX, c.centerY - c.centerY * 0.03, c.radius);
 
-      const index = Math.floor(Math.random() * numberTextList.length);
-      const numberText = numberTextList[index];
+      const index = c.index + 1;
+      let alphabetText = null;
 
-      const numberTextName = numberText.name;
-      const radius = numberText.radius;
-      const color = numberText.color;
-      const fontColor = numberText.fontColor;
+      if (index > alphabetTextList.length - 1) {
+        alphabetText = completedAlphabet;
+      } else {
+        alphabetText = alphabetTextList[index];
+      }
+
+      const alphabetTextName = alphabetText.name;
+      const radius = alphabetText.radius;
+      const color = alphabetText.color;
+      const fontColor = alphabetText.fontColor;
 
       const newCircle = new Circle(
-        numberTextName,
+        index,
+        alphabetTextName,
         c.centerX,
         c.centerY,
-        radius * 2,
+        radius,
         color,
         fontColor
       );
@@ -190,13 +199,8 @@ const animate = () => {
     }
   });
 
-  if (spark) {
-    spark.update();
-    spark.draw(ctx);
-
-    if (spark.isEnd) {
-      spark = null;
-    }
+  if (boom) {
+    boom.draw(ctx);
   }
 
   requestAnimationFrame(animate);
