@@ -13,7 +13,7 @@ export class Point {
     this.vx = 0;
     this.vy = 0;
     this.force = {
-      x: Math.random() * 0.2 - 0.1,
+      x: Math.random() * 0.8 - 0.4,
       y: 0,
     };
     this.mass = this.radius * 1.3;
@@ -38,7 +38,7 @@ export class Point {
         x: dx / dist,
         y: dy / dist,
       };
-      const force = 8;
+      const force = 20;
 
       this.x += normalized.x * force;
       this.y += normalized.y * force;

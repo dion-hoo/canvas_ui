@@ -3,7 +3,7 @@ export class Text {
     this.x = x;
     this.y = y;
 
-    this.text = "Curtain Animation";
+    this.text = "Net Animation";
   }
 
   draw(ctx) {
