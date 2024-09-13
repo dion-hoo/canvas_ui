@@ -33,7 +33,7 @@ export class Point {
     this.y += this.vy + ay * dt * dt;
   }
 
-  move(x, y, mouse) {
+  move(ctx, x, y, mouse) {
     const dx = mouse.x - (x + this.x);
     const dy = mouse.y - (y + this.y);
     const distance = Math.sqrt(dx * dx + dy * dy);
@@ -42,6 +42,14 @@ export class Point {
       y: dy / distance,
     };
     const radius = 20;
+
+    if (mouse.isDown) {
+      ctx.fillStyle = "#fff";
+      ctx.beginPath();
+      ctx.arc(mouse.x - x, mouse.y - y, radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.closePath();
+    }
 
     if (distance < radius && mouse.isDown) {
       this.x += normarlize.x * 2;
@@ -53,6 +61,10 @@ export class Point {
   }
 
   restrict(p2, dist) {
+    if (this === p2) {
+      return false;
+    }
+
     const dx = p2.x - this.x;
     const dy = p2.y - this.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
@@ -72,7 +84,7 @@ export class Point {
   }
 
   draw(ctx) {
-    ctx.fillStyle = "#000";
+    ctx.fillStyle = "#aeaeae";
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
     ctx.fill();

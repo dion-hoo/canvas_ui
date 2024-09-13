@@ -12,7 +12,7 @@ export class Cobweb {
 
     const degree = 360 / this.sides;
 
-    this.count = 6;
+    this.count = 7;
 
     this.distance = new Array(this.count);
     this.points = new Array(this.count);
@@ -26,12 +26,12 @@ export class Cobweb {
       for (let j = 0; j < this.sides; j++) {
         const radian = (degree * j * Math.PI) / 180;
         const size = this.size - i * this.gap;
-        const curve = this.curveRadius - i * 12;
+        const curve = this.curveRadius - i * 6;
 
         const x = Math.cos(radian) * size;
         const y = Math.sin(radian) * size;
 
-        this.points[i][j] = new Point(x, y, 3, curve);
+        this.points[i][j] = new Point(x, y, 1, curve);
       }
     }
 
@@ -49,21 +49,21 @@ export class Cobweb {
         this.distance[i][j] = dist;
       }
     }
-
-    console.log(this.points);
   }
 
   lerp(p1, p2, d1) {
     return (1 - d1) * p1 + d1 * p2;
   }
 
-  draw(ctx, mouse) {
+  draw(ctx, mouse, angle) {
     ctx.save();
     ctx.translate(this.x, this.y);
 
+    const radian = (angle * Math.PI) / 180;
+    ctx.rotate(radian);
+
     ctx.lineWidth = this.lineWidth;
-    ctx.strokeStyle = "#000";
-    ctx.beginPath();
+    ctx.strokeStyle = "#aeaeae";
 
     for (let i = 0; i < this.points.length; i++) {
       const point = this.points[i];
@@ -73,9 +73,28 @@ export class Cobweb {
         const p2 = point[k];
         const dist = this.distance[i][j];
 
+        ctx.beginPath();
+        for (let z = 0, h = z; z < this.count; h = z++) {
+          const startX = this.points[h][j].x;
+          const startY = this.points[h][j].y;
+
+          const endX = this.points[z][j].x;
+          const endY = this.points[z][j].y;
+
+          const c1 = this.points[h][j];
+          const c2 = this.points[z][j];
+
+          ctx.moveTo(startX, startY);
+          ctx.lineTo(endX, endY);
+
+          c1.restrict(c2, 40);
+        }
+        ctx.stroke();
+
         p1.restrict(p2, dist);
         p1.update(1);
-        p1.move(this.x, this.y, mouse);
+        p1.move(ctx, this.x, this.y, mouse);
+        p1.draw(ctx);
 
         const dx = 0 - p1.x;
         const dy = 0 - p1.y;
@@ -90,6 +109,7 @@ export class Cobweb {
           y: p1.curve * normarlize.y,
         };
 
+        ctx.beginPath();
         ctx.moveTo(p1.x, p1.y);
 
         const cx = (p1.x + p2.x) / 2 + move.x;
@@ -97,8 +117,7 @@ export class Cobweb {
 
         ctx.quadraticCurveTo(cx, cy, p2.x, p2.y);
         ctx.stroke();
-
-        p1.draw(ctx);
+        ctx.closePath();
       }
     }
 

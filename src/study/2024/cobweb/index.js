@@ -23,20 +23,21 @@ const resize = () => {
   const x = innerWidth * 0.5;
   const y = innerHeight * 0.5;
   const size = 300;
-  const side = 7;
-  const curveRadius = 70;
+  const side = 10;
+  const curveRadius = 40;
   const lineWidth = 1;
-  const gap = 50;
+  const gap = 40;
 
   cobweb = new Cobweb(x, y, side, size, gap, curveRadius, lineWidth);
 };
 
+let angle = 0;
 const animate = () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  cobweb.draw(ctx, mouse);
+  cobweb.draw(ctx, mouse, angle);
 
-  //  requestAnimationFrame(animate);
+  requestAnimationFrame(animate);
 };
 
 const onDown = (event) => {
