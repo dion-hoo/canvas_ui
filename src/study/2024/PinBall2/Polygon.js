@@ -133,8 +133,8 @@ export class Polygon {
   updatePoint(point, normal) {
     const dot = point.vx * normal.x + point.vy * normal.y;
 
-    point.vx = point.vx - 2 * dot * normal.x;
-    point.vy = point.vy - 2 * dot * normal.y;
+    point.vx += 2 * -dot * normal.x;
+    point.vy += 2 * -dot * normal.y;
 
     point.oldX = point.x - point.vx;
     point.oldY = point.y - point.vy;

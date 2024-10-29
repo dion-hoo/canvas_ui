@@ -76,14 +76,14 @@ export class Point {
         this.oldX = this.x + this.vx;
         this.y = p.y - p.radius - this.radius;
 
-        // this.vy = this.vy - 2 * dot * normal.y;
-        // this.oldY = this.y + this.vy;
+        this.vy = this.vy + 2 * -dot * normal.y;
+        this.oldY = this.y + this.vy;
 
         this.vy = 0;
         this.oldY = this.y;
 
         p.isClose = true;
-        p.gravity.y = 1;
+        p.gravity.y = this.mass / 20;
 
         // const cx = innerWidth * 0.5 - this.x;
         // const cy = innerHeight * 0.6 - this.y;

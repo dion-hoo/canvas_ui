@@ -60,7 +60,7 @@ const resize = () => {
   for (let i = 0; i < 5; i++) {
     let x = Math.random() * (endX - startX) + startX;
     let y = -Math.random() * 300;
-    const radius = size * 1.3;
+    const radius = size * 2;
 
     point.push(new Point(i, x, y, radius));
 
@@ -107,7 +107,7 @@ const animate = () => {
   point.forEach((p) => {
     p.lineCollsion(vertices);
     p.constraints();
-    // p.collision(point);
+    p.collision(point);
     p.move(mouse);
     p.update(1);
     p.draw(ctx);
@@ -140,6 +140,12 @@ const onMove = (event) => {
   }
 };
 
+const onClick = (event) => {
+  const x = event.clientX;
+  const y = event.clientY;
+  point.push(new Point(0, x, y, 40));
+};
+
 const onUp = () => {
   mouse.isDown = false;
 };
@@ -147,4 +153,5 @@ const onUp = () => {
 window.addEventListener("pointerdown", onDown);
 window.addEventListener("pointermove", onMove);
 window.addEventListener("pointerup", onUp);
+window.addEventListener("click", onClick);
 window.addEventListener("resize", resize);

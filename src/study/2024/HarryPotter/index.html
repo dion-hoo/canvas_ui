@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smoke</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      @font-face {
+        font-family: "harry";
+        src: url("./harry-potter.TTF") format("truetype");
+        font-weight: 800;
+      }
+
+      body {
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        background-color: #442055;
+        animation: backgroundAnimation 7s 2s linear forwards;
+      }
+
+      .wrap {
+        position: relative;
+        pointer-events: none;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100vw;
+        height: 100vh;
+        color: #fff;
+        font-family: harry;
+        font-size: 2vw;
+      }
+
+      ul {
+        position: relative;
+        top: 50px;
+        list-style: none;
+        display: flex;
+        align-items: center;
+        width: 400px;
+        height: 400px;
+        animation: rotateAnimation 10s 2s linear forwards infinite;
+
+        li {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          animation: textAnimation 2s linear forwards reverse;
+
+          &:nth-child(1) {
+            transform: rotateZ(0deg) translateX(200px);
+            /* animation: firstAnimation 2s linear forwards; */
+          }
+          &:nth-child(2) {
+            transform: rotateZ(10.5882deg) translateX(200px);
+          }
+          &:nth-child(3) {
+            transform: rotateZ(21.1765deg) translateX(200px);
+          }
+          &:nth-child(4) {
+            transform: rotateZ(31.7647deg) translateX(200px);
+          }
+          &:nth-child(5) {
+            transform: rotateZ(42.3529deg) translateX(200px);
+          }
+          &:nth-child(6) {
+            transform: rotateZ(52.9412deg) translateX(200px);
+          }
+          &:nth-child(7) {
+            transform: rotateZ(63.5294deg) translateX(200px);
+          }
+          &:nth-child(8) {
+            transform: rotateZ(74.1176deg) translateX(200px);
+          }
+          &:nth-child(9) {
+            transform: rotateZ(84.7059deg) translateX(200px);
+          }
+          &:nth-child(10) {
+            transform: rotateZ(95.2941deg) translateX(200px);
+          }
+          &:nth-child(11) {
+            transform: rotateZ(105.882deg) translateX(200px);
+          }
+          &:nth-child(12) {
+            transform: rotateZ(116.471deg) translateX(200px);
+          }
+          &:nth-child(13) {
+            transform: rotateZ(127.059deg) translateX(200px);
+          }
+          &:nth-child(14) {
+            transform: rotateZ(137.647deg) translateX(200px);
+          }
+          &:nth-child(15) {
+            transform: rotateZ(148.235deg) translateX(200px);
+          }
+          &:nth-child(16) {
+            transform: rotateZ(158.824deg) translateX(200px);
+          }
+          &:nth-child(17) {
+            transform: rotateZ(169.412deg) translateX(200px);
+          }
+          &:nth-child(18) {
+            transform: rotateZ(180deg) translateX(200px);
+          }
+          &:nth-child(19) {
+            transform: rotateZ(190.588deg) translateX(200px);
+          }
+          &:nth-child(20) {
+            transform: rotateZ(201.176deg) translateX(200px);
+          }
+          &:nth-child(21) {
+            transform: rotateZ(211.765deg) translateX(200px);
+          }
+          &:nth-child(22) {
+            transform: rotateZ(222.353deg) translateX(200px);
+          }
+          &:nth-child(23) {
+            transform: rotateZ(232.941deg) translateX(200px);
+          }
+          &:nth-child(24) {
+            transform: rotateZ(243.529deg) translateX(200px);
+          }
+          &:nth-child(25) {
+            transform: rotateZ(254.118deg) translateX(200px);
+          }
+          &:nth-child(26) {
+            transform: rotateZ(264.706deg) translateX(200px);
+          }
+          &:nth-child(27) {
+            transform: rotateZ(275.294deg) translateX(200px);
+          }
+          &:nth-child(28) {
+            transform: rotateZ(285.882deg) translateX(200px);
+          }
+          &:nth-child(29) {
+            transform: rotateZ(296.471deg) translateX(200px);
+          }
+          &:nth-child(30) {
+            transform: rotateZ(307.059deg) translateX(200px);
+          }
+          &:nth-child(31) {
+            transform: rotateZ(317.647deg) translateX(200px);
+          }
+          &:nth-child(32) {
+            transform: rotateZ(328.235deg) translateX(200px);
+          }
+          &:nth-child(33) {
+            transform: rotateZ(338.824deg) translateX(200px);
+          }
+          &:nth-child(34) {
+            transform: rotateZ(349.412deg) translateX(200px);
+          }
+        }
+
+        .space {
+          width: 10px;
+        }
+      }
+
+      canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      @keyframes textAnimation {
+        to {
+          transform: none;
+        }
+      }
+
+      @keyframes firstAnimation {
+        to {
+          transform: rotateZ(0deg) translateX(200px);
+        }
+      }
+
+      @keyframes rotateAnimation {
+        to {
+          transform: rotateZ(360deg);
+        }
+      }
+
+      @keyframes backgroundAnimation {
+        to {
+          background-color: #000;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <ul>
+        <li>T</li>
+        <li>h</li>
+        <li>i</li>
+        <li>s</li>
+        <li class="space"></li>
+        <li>i</li>
+        <li>s</li>
+        <li class="space"></li>
+        <li>a</li>
+        <li>n</li>
+        <li class="space"></li>
+        <li>i</li>
+        <li>n</li>
+        <li>t</li>
+        <li>e</li>
+        <li>r</li>
+        <li>a</li>
+        <li>c</li>
+        <li>t</li>
+        <li>i</li>
+        <li>v</li>
+        <li>e</li>
+        <li class="space"></li>
+        <li>w</li>
+        <li>e</li>
+        <li>b</li>
+        <li class="space"></li>
+        <li>b</li>
+        <li>y</li>
+        <li class="space"></li>
+        <li>D</li>
+        <li>i</li>
+        <li>o</li>
+        <li>n</li>
+      </ul>
+    </div>
+    <canvas class="canvas"></canvas>
+    <script type="module" src="./index.js"></script>
+  </body>
+</html>
