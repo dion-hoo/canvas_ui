@@ -8,15 +8,22 @@ let reflection = [];
 let constraints = [];
 let conservationEnergy = [];
 
-const makePoint = (arr, x) => {
+const makePoint = (minWidth, maxWidth, isEuler) => {
+  const arr = [];
+
   for (let i = 0; i < 2; i++) {
     const radius = Math.min(innerWidth * 0.03, 50);
-    const y = i === 0 ? innerHeight - radius : innerHeight - radius * 13;
-    const speedY = i === 0 ? 0 : 1;
-    const color = i === 0 ? "rgba(255, 255, 255, 0.2)" : "#fff";
 
-    arr.push(new Point(x, y, radius, speedY, color));
+    const x = minWidth + (maxWidth - minWidth) / 2;
+    const y =
+      i === 1
+        ? innerHeight - radius
+        : Math.random() * (innerHeight * 0.6 - radius * 2) + radius;
+
+    arr.push(new Point(i, x, y, radius, minWidth, maxWidth, isEuler));
   }
+
+  return arr;
 };
 
 const resize = () => {
@@ -35,10 +42,10 @@ const resize = () => {
   constraints = [];
   conservationEnergy = [];
 
-  makePoint(overlap, innerWidth * 0.13);
-  makePoint(reflection, innerWidth * 0.38);
-  makePoint(constraints, innerWidth * 0.62);
-  makePoint(conservationEnergy, innerWidth * 0.87);
+  overlap = makePoint(0, innerWidth * 0.25, false);
+  reflection = makePoint(innerWidth * 0.25, innerWidth * 0.5, false);
+  constraints = makePoint(innerWidth * 0.5, innerWidth * 0.75, false);
+  conservationEnergy = makePoint(innerWidth * 0.75, innerWidth, true);
 };
 
 const animate = () => {
@@ -47,27 +54,28 @@ const animate = () => {
   overlap.forEach((p) => {
     p.update(1);
     p.overlap(overlap);
-    p.windowBounce();
+    p.edges();
     p.draw(ctx);
   });
 
   reflection.forEach((p) => {
     p.update(1);
     p.reflection(reflection);
-    p.windowBounce();
+    p.edges();
     p.draw(ctx);
   });
 
   constraints.forEach((p) => {
     p.update(1);
     p.constraints(constraints);
-    p.windowBounce();
+    p.edges();
     p.draw(ctx);
   });
 
   conservationEnergy.forEach((p) => {
     p.update(1);
-    p.windowBounce();
+    p.edges();
+    p.conservationEnergy(conservationEnergy);
     p.draw(ctx);
   });
 
