@@ -1,15 +1,14 @@
-export class Vector {
-  constructor(isFixed, x, y, radius) {
-    this.isFixed = isFixed;
+export class Point {
+  constructor(index, x, y, radius, isLock) {
+    this.index = index;
     this.x = x;
     this.y = y;
-    this.radius = radius;
-
     this.oldX = x;
     this.oldY = y;
+    this.isLock = isLock;
 
-    this.vx = 0;
-    this.vy = 0;
+    this.radius = radius;
+    this.mass = this.radius * 1.3;
 
     this.force = {
       x: 0,
@@ -17,36 +16,14 @@ export class Vector {
     };
     this.gravity = {
       x: 0,
-      y: 0,
+      y: 0.1,
     };
-    this.mass = this.radius * 1.3;
 
     this.damping = 0.4;
-    this.isClose = false;
-  }
-
-  move(mouse) {
-    if (mouse.isDown) {
-      const dx = mouse.x - this.x;
-      const dy = mouse.y - this.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-      const minDistance = this.radius * 3;
-
-      if (distance < minDistance) {
-        const normalize = {
-          x: dx / distance,
-          y: dy / distance,
-        };
-        const force = 10;
-
-        this.x += normalize.x * force;
-        this.y += normalize.y * force;
-      }
-    }
   }
 
   update(dt) {
-    if (!this.isFixed) {
+    if (!this.isLock) {
       this.vx = this.x - this.oldX;
       this.vy = this.y - this.oldY;
 
@@ -61,43 +38,68 @@ export class Vector {
     }
   }
 
-  restricts(ctx, point) {
-    for (let i = 0; i < point.length - 1; i++) {
-      const p1 = point[i];
-      const p2 = point[i + 1];
+  updatePosition(mouse) {
+    const dx = mouse.x - this.x;
+    const dy = mouse.y - this.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const minDist = 100;
 
-      if (p1.isFixed && p2.isFixed) continue;
+    if (dist < minDist && !this.isLock) {
+      const angle = Math.atan2(dy, dx);
+      const force = 2;
+
+      this.x += Math.cos(angle) * force;
+      this.y += Math.sin(angle) * force;
+    }
+  }
+
+  constraints(ctx, point) {
+    ctx.strokeStyle = "#fff";
+
+    for (let i = 0, j = 1; i < point.length; j = i++) {
+      const p1 = point[i];
+      const p2 = point[j];
+
+      ctx.beginPath();
+      ctx.moveTo(p1.x, p1.y);
+      ctx.lineTo(p2.x, p2.y);
 
       const dx = p2.x - p1.x;
       const dy = p2.y - p1.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-      const maxDistance = p1.radius + p2.radius;
-      const diff = distance - maxDistance;
-      const percent = diff / distance / 2;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const minDist = (p1.radius + p2.radius) * 10;
 
-      const tx = dx * percent;
-      const ty = dy * percent;
+      const diff = dist - minDist;
+      const percent = diff / dist / 2;
 
-      if (!p1.isFixed) {
+      const tx = percent * dx;
+      const ty = percent * dy;
+
+      if (!p1.isLock) {
         p1.x += tx;
         p1.y += ty;
       }
 
-      if (!p2.isFixed) {
+      if (!p2.isLock) {
         p2.x -= tx;
         p2.y -= ty;
       }
+
+      ctx.stroke();
+      ctx.closePath();
     }
   }
 
-  constraints() {
+  edge() {
     if (this.x < this.radius) {
       this.x = this.radius;
+
       this.oldX = this.x + this.vx * this.damping;
     }
 
     if (this.x > innerWidth - this.radius) {
       this.x = innerWidth - this.radius;
+
       this.oldX = this.x + this.vx * this.damping;
     }
 
@@ -109,12 +111,7 @@ export class Vector {
   }
 
   draw(ctx) {
-    if (this.isClose) {
-      ctx.fillStyle = "#19c";
-    } else {
-      ctx.fillStyle = "#333";
-    }
-
+    ctx.fillStyle = "red";
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
     ctx.fill();
