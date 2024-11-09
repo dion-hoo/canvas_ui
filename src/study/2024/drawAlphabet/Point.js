@@ -2,7 +2,7 @@ export class Point {
   constructor({ x, y, isMoveTo = false, isCurve = false }) {
     this.x = x;
     this.y = y;
-    this.radius = 10;
+    this.radius = 5;
 
     this.time = 0;
     this.timeSpeed = 0.025;

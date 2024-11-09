@@ -15,80 +15,60 @@ export class Text {
       y: 0,
       time: 0,
     };
+    this.timePath = [];
+    this.specificPoint = [0, 0.2, 0.4, 0.6, 0.8];
 
-    // const text = alphabet[label];
+    // true false
+    this.isLine = true;
+    this.isThick = false;
+    this.chococat = true;
+    this.isLeaf = true;
 
-    // for (let i = 0; i < text.length; i++) {
-    //   const t = text[i];
+    const text = alphabet[label];
 
-    //   this.point.push(
-    //     new Point({
-    //       x: this.x + t.x,
-    //       y: this.y + t.y,
-    //       isMoveTo: t.isMoveTo,
-    //       isCurve: t.isCurve,
-    //     })
-    //   );
-    // }
+    for (let i = 0; i < text.length; i++) {
+      const t = text[i];
 
-    this.point[0] = new Point({
-      x: this.x + 80,
-      y: this.y,
-      isMoveTo: true,
-    });
+      this.point.push(
+        new Point({
+          x: this.x + t.x,
+          y: this.y + t.y,
+          isMoveTo: t.isMoveTo,
+          isCurve: t.isCurve,
+        })
+      );
+    }
 
-    this.point[1] = new Point({
-      x: this.x + 80,
-      y: this.y - 80,
-      isCurve: true,
-    });
-
-    this.point[2] = new Point({
-      x: this.x,
-      y: this.y - 80,
-    });
-
-    this.point[3] = new Point({
-      x: this.x - 80,
-      y: this.y - 80,
-      isCurve: true,
-    });
-
-    this.point[4] = new Point({
-      x: this.x - 80,
-      y: this.y,
-    });
-
-    this.point[5] = new Point({
-      x: this.x - 80,
-      y: this.y + 80,
-      isCurve: true,
-    });
-
-    this.point[6] = new Point({
-      x: this.x,
-      y: this.y + 80,
-    });
-
-    this.point[7] = new Point({
-      x: this.x + 80,
-      y: this.y + 80,
-      isCurve: true,
-    });
-
-    this.point[8] = new Point({
-      x: this.x + 80,
-      y: this.y,
-    });
+    this.image = new Image();
+    this.image.src = this.isLeaf ? "./leaf1.png" : "./chococat.png";
   }
 
   lerp(p1, p2, d1) {
     return (1 - d1) * p1 + d1 * p2;
   }
 
+  getSpecificPoint(time, x, y) {
+    this.specificPoint.forEach((p) => {
+      if (Math.abs(time - p) < 0.00001) {
+        this.timePath.push({
+          x,
+          y,
+          angle: Math.random() * 360,
+          angleSpeed: Math.random() * 0.01 + 0.005,
+        });
+      }
+    });
+  }
+
   draw(ctx) {
-    ctx.strokeStyle = "#fff";
-    ctx.lineWidth = 30;
+    if (this.isLeaf) {
+      ctx.strokeStyle = "green";
+      ctx.lineWidth = 1;
+    } else {
+      ctx.strokeStyle = "#121212";
+      ctx.lineWidth = this.isThick ? 25 : 1;
+    }
+
     ctx.beginPath();
 
     for (let i = 0; i < this.point.length; i++) {
@@ -125,13 +105,21 @@ export class Text {
           const cx = this.lerp(x1, x2, next.time);
           const cy = this.lerp(y1, y2, next.time);
 
-          ctx.quadraticCurveTo(x1, y1, cx, cy);
+          if (this.isLine) {
+            ctx.quadraticCurveTo(x1, y1, cx, cy);
+          }
+
+          this.getSpecificPoint(next.time, cx, cy);
         } else {
           if (!this.point[i - 1].isCurve) {
             const tx = this.lerp(this.prev.x, p.x, p.time);
             const ty = this.lerp(this.prev.y, p.y, p.time);
 
-            ctx.lineTo(tx, ty);
+            if (this.isLine) {
+              ctx.lineTo(tx, ty);
+            }
+
+            this.getSpecificPoint(p.time, tx, ty);
           }
         }
       }
@@ -145,6 +133,37 @@ export class Text {
       this.prev = p;
     }
     ctx.stroke();
+
+    if (this.isLeaf || this.chococat) {
+      ctx.fillStyle = "purple";
+      for (let i = 0; i < this.timePath.length; i++) {
+        const time = this.timePath[i];
+
+        ctx.save();
+        ctx.translate(time.x, time.y);
+
+        if (this.isLeaf) {
+          time.angle += time.angleSpeed;
+        }
+
+        ctx.rotate(Math.sin(time.angle));
+        ctx.beginPath();
+
+        if (this.isLeaf) {
+          const width = 13; // 188
+          const height = width * 1.825; // 343;
+
+          ctx.drawImage(this.image, -1.5, -height, width, height);
+        } else {
+          const width = 25; // 133
+          const height = width * 0.782; // 104
+
+          ctx.drawImage(this.image, -width / 2, -height / 2, width, height);
+        }
+
+        ctx.restore();
+      }
+    }
 
     // ============= point  ============= //
     // ctx.fillStyle = "red";

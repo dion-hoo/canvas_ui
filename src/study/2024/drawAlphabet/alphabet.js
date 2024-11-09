@@ -1,3 +1,6 @@
+const angle = -45;
+const radian = (angle * Math.PI) / 180;
+
 export const alphabet = {
   t: [
     { x: -80, y: -100, isMoveTo: true },
@@ -13,5 +16,54 @@ export const alphabet = {
     { x: 10, y: 0 },
     { x: 60, y: 0, isCurve: true },
     { x: 60, y: 100 },
+  ],
+  o: [
+    { x: 80, y: 0, isMoveTo: true },
+    { x: 80, y: -80, isCurve: true },
+    { x: 0, y: -80 },
+    { x: -80, y: -80, isCurve: true },
+    { x: -80, y: 0 },
+    { x: -80, y: 80, isCurve: true },
+    { x: 0, y: 80 },
+    { x: 80, y: 80, isCurve: true },
+    { x: 80, y: 0 },
+  ],
+  g: [
+    { x: Math.cos(radian) * 100, y: Math.sin(radian) * 60, isMoveTo: true },
+    { x: Math.cos(radian) * 80, y: -80, isCurve: true },
+    { x: 0, y: -80 },
+    { x: -80, y: -80, isCurve: true },
+    { x: -80, y: 0 },
+    { x: -80, y: 80, isCurve: true },
+    { x: 0, y: 80 },
+    {
+      x: 80,
+      y: 80,
+      isCurve: true,
+    },
+    {
+      x: 80,
+      y: 10,
+    },
+    {
+      x: 0,
+      y: 10,
+    },
+  ],
+  b: [
+    { x: 10, y: -10, isMoveTo: true },
+    { x: 70, y: -10, isCurve: true },
+    { x: 70, y: -55 },
+    { x: 70, y: -110, isCurve: true },
+    { x: 10, y: -110 },
+    { x: -80, y: -110 },
+    { x: -80, y: 0 },
+    { x: -80, y: 110 },
+    { x: 10, y: 110 },
+    { x: 70, y: 110, isCurve: true },
+    { x: 70, y: 55 },
+    { x: 70, y: 0, isCurve: true },
+    { x: 10, y: -10 },
+    { x: -80, y: -10 },
   ],
 };

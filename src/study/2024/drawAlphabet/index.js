@@ -4,6 +4,9 @@ const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 let text = null;
 
+let centerX = innerWidth * 0.5;
+let centerY = innerHeight * 0.5;
+
 const resize = () => {
   const ratio = 1; //devicePixelRatio;
 
@@ -15,17 +18,17 @@ const resize = () => {
 
   ctx.scale(ratio, ratio);
 
-  text = new Text(innerWidth * 0.5, innerHeight * 0.5, "t");
+  text = new Text(centerX, centerY, "b");
 };
 
 const animate = () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   ctx.save();
-  ctx.scale(2, 2);
+  ctx.scale(3, 3);
 
   // 스케일 조정으로 이동된 좌표를 보정
-  ctx.translate((-innerWidth * 0.5) / 2, (-innerHeight * 0.5) / 2);
+  ctx.translate(-centerX / 1.5, -centerY / 1.5);
 
   text.draw(ctx);
 
