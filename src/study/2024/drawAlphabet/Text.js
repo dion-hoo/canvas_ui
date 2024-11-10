@@ -16,13 +16,16 @@ export class Text {
       time: 0,
     };
     this.timePath = [];
-    this.specificPoint = [0, 0.2, 0.4, 0.6, 0.8];
+    this.specificPoint1 = [0, 0.2, 0.4, 0.6, 0.8, 1];
+    this.specificPoint2 = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1];
+
+    this.isGuide = false;
 
     // true false
     this.isLine = true;
     this.isThick = false;
-    this.chococat = true;
-    this.isLeaf = true;
+    this.chococat = false;
+    this.isLeaf = false;
 
     const text = alphabet[label];
 
@@ -31,6 +34,7 @@ export class Text {
 
       this.point.push(
         new Point({
+          index: i,
           x: this.x + t.x,
           y: this.y + t.y,
           isMoveTo: t.isMoveTo,
@@ -47,27 +51,32 @@ export class Text {
     return (1 - d1) * p1 + d1 * p2;
   }
 
-  getSpecificPoint(time, x, y) {
-    this.specificPoint.forEach((p) => {
+  getSpecificPoint(arr, time, x, y, radian) {
+    arr.forEach((p) => {
       if (Math.abs(time - p) < 0.00001) {
         this.timePath.push({
           x,
           y,
+          scale: 0,
+          maxScale: this.chococat ? 1 : Math.random() * 0.6 + 0.6,
           angle: Math.random() * 360,
-          angleSpeed: Math.random() * 0.01 + 0.005,
+          angleSpeed: Math.random() * 0.02,
+          radian: radian,
         });
       }
     });
   }
 
-  draw(ctx) {
+  draw(ctx, lineWidth) {
     if (this.isLeaf) {
       ctx.strokeStyle = "green";
       ctx.lineWidth = 1;
     } else {
       ctx.strokeStyle = "#121212";
-      ctx.lineWidth = this.isThick ? 25 : 1;
+      ctx.lineWidth = this.isThick ? 25 : lineWidth;
     }
+
+    ctx.lineCap = "round";
 
     ctx.beginPath();
 
@@ -105,29 +114,93 @@ export class Text {
           const cx = this.lerp(x1, x2, next.time);
           const cy = this.lerp(y1, y2, next.time);
 
-          if (this.isLine) {
+          if (this.isLine && !this.chococat) {
             ctx.quadraticCurveTo(x1, y1, cx, cy);
           }
 
-          this.getSpecificPoint(next.time, cx, cy);
+          const dx = next.x - p.x;
+          const dy = next.y - p.y;
+          const radian = Math.atan2(dy, dx);
+
+          if (this.isGuide) {
+            ctx.strokeStyle = "#000";
+          } else {
+            if (!this.chococat && !this.isLeaf) {
+              const gradient = ctx.createLinearGradient(
+                this.prev.x,
+                this.prev.y,
+                next.x,
+                next.y
+              );
+
+              gradient.addColorStop(0, "#fd3865");
+              gradient.addColorStop(0.1, "#fd658c");
+              gradient.addColorStop(0.2, "#fcd0a7");
+              gradient.addColorStop(0.3, "#f9dfc3");
+              gradient.addColorStop(0.4, "#95cee2");
+              gradient.addColorStop(0.5, "#56adfa");
+
+              gradient.addColorStop(0.6, "#fe37ae");
+              gradient.addColorStop(0.7, "#fdac93");
+              gradient.addColorStop(0.8, "#fc2fa9");
+              gradient.addColorStop(0.9, "#fde4aa");
+              gradient.addColorStop(1, "#c2b5bf");
+
+              ctx.strokeStyle = gradient;
+            }
+          }
+
+          this.getSpecificPoint(this.specificPoint2, next.time, cx, cy, radian);
         } else {
           if (!this.point[i - 1].isCurve) {
             const tx = this.lerp(this.prev.x, p.x, p.time);
             const ty = this.lerp(this.prev.y, p.y, p.time);
 
-            if (this.isLine) {
+            if (this.isLine && !this.chococat) {
               ctx.lineTo(tx, ty);
             }
 
-            this.getSpecificPoint(p.time, tx, ty);
+            const dx = p.x - this.prev.x;
+            const dy = p.y - this.prev.y;
+            const radian = Math.atan2(dy, dx);
+
+            if (this.isGuide) {
+              ctx.strokeStyle = "#000";
+            } else {
+              if (!this.chococat && !this.isLeaf) {
+                const gradient = ctx.createLinearGradient(
+                  this.prev.x,
+                  this.prev.y,
+                  p.x,
+                  p.y
+                );
+
+                gradient.addColorStop(0, "#fd3865");
+                gradient.addColorStop(0.1, "#fd658c");
+                gradient.addColorStop(0.2, "#fcd0a7");
+                gradient.addColorStop(0.3, "#f9dfc3");
+                gradient.addColorStop(0.4, "#95cee2");
+                gradient.addColorStop(0.5, "#56adfa");
+
+                gradient.addColorStop(0.6, "#fe37ae");
+                gradient.addColorStop(0.7, "#fdac93");
+                gradient.addColorStop(0.8, "#fc2fa9");
+                gradient.addColorStop(0.9, "#fde4aa");
+                gradient.addColorStop(1, "#c2b5bf");
+
+                ctx.strokeStyle = gradient;
+              }
+            }
+
+            this.getSpecificPoint(this.specificPoint1, p.time, tx, ty, radian);
           }
         }
       }
 
-      if (p.time < 1) {
+      if (p.time < 1.01) {
         p.time += p.timeSpeed;
       } else {
-        p.time = 1;
+        p.time = 1.01;
       }
 
       this.prev = p;
@@ -141,6 +214,11 @@ export class Text {
 
         ctx.save();
         ctx.translate(time.x, time.y);
+        ctx.scale(time.scale, time.scale);
+
+        if (time.scale < time.maxScale) {
+          time.scale += 0.1;
+        }
 
         if (this.isLeaf) {
           time.angle += time.angleSpeed;
@@ -166,14 +244,15 @@ export class Text {
     }
 
     // ============= point  ============= //
-    // ctx.fillStyle = "red";
-    // for (let i = 0; i < this.point.length; i++) {
-    //   const p = this.point[i];
+    if (!this.isLeaf && !this.chococat && this.isGuide) {
+      for (let i = 0; i < this.point.length; i++) {
+        const p = this.point[i];
 
-    //   ctx.beginPath();
-    //   ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-    //   ctx.fill();
-    // }
+        if (!p.isCurve) {
+          p.drawLine(ctx);
+        }
+      }
+    }
 
     // ctx.strokeStyle = "#fff";
     // ctx.lineWidth = 1;
