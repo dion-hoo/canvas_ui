@@ -1,0 +1,42 @@
+export const triangles = [
+  { x: innerWidth * 0.41, y: innerHeight * 0.2, sides: 3, size: 100, angle: 0 },
+  {
+    x: innerWidth * 0.56,
+    y: innerHeight * 0.3,
+    sides: 6,
+    size: 100,
+    angle: 180,
+  },
+  { x: innerWidth * 0.41, y: innerHeight * 0.4, sides: 4, size: 100, angle: 0 },
+  {
+    x: innerWidth * 0.56,
+    y: innerHeight * 0.5,
+    sides: 3,
+    size: 100,
+    angle: 180,
+  },
+  { x: innerWidth * 0.41, y: innerHeight * 0.6, sides: 5, size: 100, angle: 0 },
+  {
+    x: innerWidth * 0.58,
+    y: innerHeight * 0.7,
+    sides: 4,
+    size: 100,
+    angle: 180,
+  },
+  { x: innerWidth * 0.43, y: innerHeight * 0.8, sides: 3, size: 100, angle: 0 },
+  {
+    x: innerWidth * 0.62,
+    y: innerHeight * 0.9,
+    sides: 7,
+    size: 100,
+    angle: 180,
+  },
+  { x: innerWidth * 0.48, y: innerHeight, sides: 3, size: 100, angle: 0 },
+  {
+    x: innerWidth * 0.62,
+    y: innerHeight * 1.1,
+    sides: 10,
+    size: 100,
+    angle: 180,
+  },
+];

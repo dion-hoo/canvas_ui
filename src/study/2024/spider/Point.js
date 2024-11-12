@@ -67,7 +67,7 @@ export class Point {
       const dx = p2.x - p1.x;
       const dy = p2.y - p1.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      const minDist = (p1.radius + p2.radius) * 10;
+      const minDist = (p1.radius + p2.radius) * 9;
 
       const diff = dist - minDist;
       const percent = diff / dist / 2;

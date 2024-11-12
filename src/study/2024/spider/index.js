@@ -8,6 +8,7 @@ const mouse = {
   isDown: false,
 };
 let point = [];
+let point2 = [];
 
 const resize = () => {
   const ratio = 1; //devicePixelRatio;
@@ -21,6 +22,7 @@ const resize = () => {
   ctx.scale(ratio, ratio);
 
   point = [];
+  point2 = [];
 
   const length = 10;
 
@@ -32,16 +34,34 @@ const resize = () => {
 
     point.push(new Point(i, x, y, radius, isLock));
   }
+
+  for (let i = 0; i < length; i++) {
+    const radius = 10;
+
+    const x = innerWidth * 0.25 + radius * 20 * (i + 1);
+    const y = innerHeight * 0.5;
+    const isLock = i === 0 || i === length - 1;
+
+    point2.push(new Point(i, x, y, radius, isLock));
+  }
 };
 
 const animate = () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  point.forEach((p) => {
+  // point.forEach((p) => {
+  //   p.update(1);
+  //   p.updatePosition(mouse);
+  //   p.edge();
+  //   p.constraints(ctx, point);
+  //   p.draw(ctx);
+  // });
+
+  point2.forEach((p) => {
     p.update(1);
     p.updatePosition(mouse);
     p.edge();
-    p.constraints(ctx, point);
+    p.constraints(ctx, point2);
     p.draw(ctx);
   });
 
