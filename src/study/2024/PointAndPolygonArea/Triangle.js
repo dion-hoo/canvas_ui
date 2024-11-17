@@ -1,29 +1,19 @@
 export class Triangle {
-  constructor(x, y, side, size) {
+  constructor(x, y, radius, side, size) {
     this.x = x;
     this.y = y;
+    this.radius = radius;
     this.side = side;
     this.size = size;
 
-    this.arr = [];
-
-    const angle = 360 / this.side;
-    const radian = (angle * Math.PI) / 180;
-
-    for (let i = 0; i <= this.side; i++) {
-      const x = this.x + Math.cos(radian * i) * this.size;
-      const y = this.y + Math.sin(radian * i) * this.size;
-
-      this.arr.push({ x, y });
-    }
+    this.arr = [
+      { x: this.x, y: this.y },
+      { x: this.x + 150, y: this.y + this.radius },
+      { x: this.x - 150, y: this.y + this.radius },
+    ];
   }
 
   draw(ctx) {
-    ctx.fillStyl = "orange";
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, 10, 0, Math.PI * 2);
-    ctx.fill();
-
     ctx.strokeStyle = "blue";
     ctx.beginPath();
 
@@ -34,6 +24,12 @@ export class Triangle {
         ctx.lineTo(a.x, a.y);
       }
     });
+    ctx.closePath();
+    ctx.stroke();
+
+    ctx.strokeStyle = "#fff";
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
     ctx.stroke();
   }
 }
