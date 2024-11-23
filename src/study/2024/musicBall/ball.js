@@ -1,8 +1,10 @@
 export class Ball {
-  constructor(x, y, radius) {
+  constructor(x, y, radius, color, isFill) {
     this.x = x;
     this.y = y;
     this.radius = radius;
+    this.color = color;
+    this.isFill = isFill;
 
     this.oldX = x;
     this.oldY = y;
@@ -61,7 +63,7 @@ export class Ball {
     };
   }
 
-  collision(ctx, polygon) {
+  collision(polygon, index) {
     const diagram = polygon.diagram;
 
     for (let i = 0, j = diagram.length - 1; i < diagram.length; j = i++) {
@@ -86,22 +88,37 @@ export class Ball {
 
       if (dist < this.radius - 2) {
         this.reaction(x, y, normal);
+
+        polygon.color = `#323232`;
+      }
+    }
+  }
+
+  constraints(point) {
+    for (let i = 0; i < point.length; i++) {
+      const p = point[i];
+
+      if (this === p) {
+        continue;
       }
 
-      // ctx.fillStyle = "blue";
-      // ctx.beginPath();
-      // ctx.arc(x, y, 5, 0, Math.PI * 2);
-      // ctx.fill();
+      const dx = p.x - this.x;
+      const dy = p.y - this.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const minDist = this.radius + p.radius;
 
-      // const px = x + normal.x * 100;
-      // const py = y + normal.y * 100;
+      if (dist < minDist) {
+        const diff = dist - minDist;
+        const percent = diff / dist / 2;
 
-      // ctx.strokeStyle = "pink";
-      // ctx.lineWidth = 2;
-      // ctx.beginPath();
-      // ctx.moveTo(x, y);
-      // ctx.lineTo(px, py);
-      // ctx.stroke();
+        const tx = percent * dx;
+        const ty = percent * dy;
+
+        this.x += tx;
+        this.y += ty;
+
+        p.color = `hsl(${20 * i}, 100%, 50%)`;
+      }
     }
   }
 
@@ -127,15 +144,15 @@ export class Ball {
     this.oldY = this.y - this.vy;
   }
 
-  edges() {
+  edges(width, height) {
     if (this.x < this.radius) {
       this.x = this.radius;
 
       this.oldX = this.x + this.vx * this.damping;
     }
 
-    if (this.x > innerWidth - this.radius) {
-      this.x = innerWidth - this.radius;
+    if (this.x > width - this.radius) {
+      this.x = width - this.radius;
 
       this.oldX = this.x + this.vx * this.damping;
     }
@@ -146,17 +163,28 @@ export class Ball {
       this.oldY = this.y + this.vy * this.damping;
     }
 
-    if (this.y > innerHeight - this.radius) {
-      this.y = innerHeight - this.radius;
+    if (this.y > height - this.radius) {
+      this.y = height - this.radius;
 
       this.oldY = this.y + this.vy * this.damping;
     }
   }
 
   draw(ctx) {
-    ctx.fillStyle = "orange";
+    if (this.isFill) {
+      ctx.fillStyle = this.color;
+    } else {
+      ctx.strokeStyle = this.color;
+      ctx.lineWidth = 3;
+    }
+
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    ctx.fill();
+
+    if (this.isFill) {
+      ctx.fill();
+    } else {
+      ctx.stroke();
+    }
   }
 }

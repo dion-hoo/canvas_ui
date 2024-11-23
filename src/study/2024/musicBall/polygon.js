@@ -1,11 +1,12 @@
 export class Polygon {
-  constructor(index, x, y, sides, size, polygonAngle) {
+  constructor(index, x, y, sides, size, polygonAngle, color) {
     this.index = index;
     this.x = x;
     this.y = y;
     this.sides = sides;
     this.size = size;
     this.polygonAngle = polygonAngle;
+    this.color = color;
 
     const angle = 360 / this.sides;
     const radian = (angle * Math.PI) / 180;
@@ -36,14 +37,10 @@ export class Polygon {
     }
   }
 
-  update() {
-    this.y -= 0.4;
-  }
-
   draw(ctx) {
     ctx.save();
-    ctx.strokeStyle = "#fff";
-    ctx.fillStyle = "#fff";
+    ctx.strokeStyle = this.color;
+    ctx.fillStyle = this.color;
 
     ctx.translate(this.x, this.y);
 
@@ -57,6 +54,7 @@ export class Polygon {
         ctx.lineTo(diagram.x, diagram.y);
       }
     }
+    ctx.lineTo(this.diagram[0].x, this.diagram[0].y);
     ctx.stroke();
     ctx.fill();
 
