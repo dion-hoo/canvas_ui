@@ -15,7 +15,7 @@ export class Point {
     };
     this.gravity = {
       x: 0,
-      y: 0.1,
+      y: 0.5,
     };
     this.mass = this.radius * 1.4;
 
@@ -28,7 +28,7 @@ export class Point {
     this.isOut = false;
   }
 
-  update(dt) {
+  update(dt, deltaTime) {
     this.vx = this.x - this.oldX;
     this.vy = this.y - this.oldY;
 
@@ -38,8 +38,8 @@ export class Point {
     const ax = this.force.x / this.mass;
     const ay = this.force.y / this.mass;
 
-    this.x += this.vx + ax * dt * dt + this.gravity.x;
-    this.y += this.vy + ay * dt * dt + this.gravity.y;
+    this.x += this.vx + ax * dt * dt + this.gravity.x * deltaTime;
+    this.y += this.vy + ay * dt * dt + this.gravity.y * deltaTime;
   }
 
   getArea(p1, p2, p3) {

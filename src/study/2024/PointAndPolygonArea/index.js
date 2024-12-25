@@ -11,6 +11,10 @@ const mouse = {
   isClick: false,
 };
 
+let lastTime = 0;
+let fpsTime = 1000 / 60;
+let deltaTime = 1;
+
 const resize = () => {
   const ratio = 1; // ;devicePixelRatio;
 
@@ -37,13 +41,28 @@ const resize = () => {
   }
 };
 
-const animate = () => {
+const onVisibilityChange = () => {
+  if (document.visibilityState === "visible") {
+    lastTime = performance.now();
+  }
+};
+
+const animate = (timeStamp) => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  if (!lastTime) {
+    lastTime = timeStamp;
+  }
+
+  const elapsed = timeStamp - lastTime;
+  lastTime = timeStamp;
+
+  deltaTime = elapsed / fpsTime;
 
   triangle.draw(ctx);
 
   point.forEach((p) => {
-    p.update(1);
+    p.update(1, deltaTime);
     p.prison(triangle, mouse);
     p.boundary(triangle, point);
     p.constraints(point);
@@ -64,8 +83,9 @@ const onClick = () => {
 };
 
 resize();
-animate();
+requestAnimationFrame(animate);
 
 window.addEventListener("click", onClick);
 window.addEventListener("pointermove", onMove);
 window.addEventListener("resize", resize);
+document.addEventListener("visibilitychange", onVisibilityChange);
