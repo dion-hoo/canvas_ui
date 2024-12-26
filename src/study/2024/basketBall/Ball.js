@@ -11,17 +11,31 @@ export class Ball extends Point {
     };
     this.isLoaded = false;
 
-    this.rotateDirection = Math.random() > 0.5 ? 1 : -1;
+    this.isGetTargetCoordinate = true;
+
+    this.rotateDirection = 1;
+    this.angle = 0;
   }
 
-  draw(ctx) {
+  draw(ctx, target) {
     ctx.save();
-
     ctx.translate(this.x, this.y);
 
-    const radian = this.y * 0.009 * this.rotateDirection;
+    if (!this.isgetTargetCoordinate) {
+      const dx = target.x - this.x;
+      const dy = target.y - this.y;
 
-    ctx.rotate(radian);
+      const cross = this.vx * dy - this.vy * dx;
+
+      this.rotateDirection = cross > 0 ? 1 : -1;
+      this.isGetTargetCoordinate = true;
+    }
+
+    const speed = Math.hypot(this.vx, this.vy) * 0.01;
+
+    this.angle += speed * this.rotateDirection;
+
+    ctx.rotate(this.angle);
 
     if (this.isLoaded) {
       const size = this.radius * 2;

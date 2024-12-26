@@ -15,17 +15,29 @@ const fps = 148;
 const fpsTime = 1000 / fps;
 let currentTime = 0;
 
+const resetFps = 4;
+const resetFpsTime = 1000 / resetFps;
+let resetTime = 0;
+
 const mouse = {
   isDown: false,
   isStart: false,
   x: 0,
   y: 0,
 };
+const touch = {
+  x: 0,
+  y: 0,
+};
+
 const xCoordinatesByRow = [7, 6, 7, 6, 7, 6, 7, 6];
 const totalYCoordinates = 7;
 const gap = 30;
 const halfGap = gap / 2;
 const columnGap = Math.sqrt(gap * gap + halfGap * halfGap);
+
+const guideX = innerWidth * 0.5 - 14 + 1;
+const guideY = innerHeight - 200;
 
 let width = 0;
 let centerX = 0;
@@ -103,7 +115,7 @@ const drawNet = () => {
 
       net.update(1);
 
-      net.move(mouse, gap);
+      net.move(touch, gap);
       net.windowBounce();
       // net.draw(ctx);
 
@@ -142,25 +154,49 @@ const drawNet = () => {
   ctx.restore();
 };
 
-const drawBall = () => {
+const startReset = (timeStamp) => {
+  if (!resetTime) {
+    resetTime = timeStamp;
+  }
+
+  const now = timeStamp - resetTime;
+
+  resetTime++;
+
+  if (now > resetFpsTime) {
+    resetTime = timeStamp;
+    return true;
+  } else {
+    return false;
+  }
+};
+
+const drawBall = (timeStamp) => {
   if (mouse.isStart) {
     ball.shooting(mouse);
 
-    if (ball.isEnd) {
-      if (
-        ball.y < ball.radius ||
-        ball.x < ball.radius ||
-        ball.x > innerWidth - ball.radius
-      ) {
+    if (!ball.isEnd) {
+      ball.update(1);
+    }
+
+    if (
+      ball.isEnd ||
+      ball.x < ball.radius ||
+      ball.x > innerWidth - ball.radius
+    ) {
+      const isStart = startReset(timeStamp);
+
+      if (isStart) {
+        mouse.isStart = false;
+        mouse.isDown = false;
+        isPass = false;
+        isFlag = false;
+
+        ball.reset();
         ball.setOriginalCroods();
+
+        resetTime = null;
       }
-
-      mouse.isStart = false;
-      mouse.isDown = false;
-      isPass = false;
-      isFlag = false;
-
-      ball.reset();
     }
   }
 
@@ -169,9 +205,8 @@ const drawBall = () => {
     isFlag = true;
   }
 
-  ball.update(1);
   ball.windowBounce();
-  ball.draw(ctx, true);
+  ball.draw(ctx, mouse);
 };
 
 const animate = (timeStamp) => {
@@ -180,7 +215,7 @@ const animate = (timeStamp) => {
   if (mouse.isDown) {
     ctx.strokeStyle = "#fff";
     ctx.beginPath();
-    ctx.moveTo(innerWidth * 0.5 - 14 + 1, innerHeight - 200);
+    ctx.moveTo(guideX, guideY);
     ctx.lineTo(mouse.x, mouse.y);
     ctx.stroke();
   }
@@ -190,14 +225,6 @@ const animate = (timeStamp) => {
   }
 
   const now = timeStamp - currentTime;
-
-  if (!isPass) {
-    drawNet();
-    drawBall();
-  } else {
-    drawBall();
-    drawNet();
-  }
 
   if (now > fpsTime && isPass) {
     for (let i = 0; i < 10; i++) {
@@ -217,6 +244,14 @@ const animate = (timeStamp) => {
     }
 
     currentTime = timeStamp;
+  }
+
+  if (!isPass) {
+    drawNet();
+    drawBall(timeStamp);
+  } else {
+    drawBall(timeStamp);
+    drawNet();
   }
 
   // smokes.forEach((smoke, index) => {
@@ -244,16 +279,30 @@ const animate = (timeStamp) => {
   requestAnimationFrame(animate);
 };
 
-const onDown = (event) => {
-  mouse.isDown = true;
+const setGuideLine = (event) => {
+  const dx = event.clientX - guideX;
+  const dy = event.clientY - guideY;
+  const dist = Math.hypot(dx, dy);
+  const maxDist = innerHeight * 0.3;
+  const isFar = dist > maxDist;
 
-  mouse.x = event.clientX;
-  mouse.y = event.clientY;
+  const angle = Math.atan2(dy, dx);
+
+  const x = guideX + Math.cos(angle) * maxDist;
+  const y = guideY + Math.sin(angle) * maxDist;
+
+  mouse.x = isFar ? x : event.clientX;
+  mouse.y = isFar ? y : event.clientY;
 };
 
 const onMove = (event) => {
-  mouse.x = event.clientX;
-  mouse.y = event.clientY;
+  if (!mouse.isStart) {
+    mouse.isDown = true;
+    setGuideLine(event);
+  }
+
+  touch.x = event.clientX;
+  touch.y = event.clientY;
 };
 
 const onClick = () => {
@@ -261,17 +310,17 @@ const onClick = () => {
 };
 
 const onUp = (event) => {
-  mouse.x = event.clientX;
-  mouse.y = event.clientY;
+  setGuideLine(event);
 
+  ball.isGetTargetCoordinate = false;
   mouse.isStart = true;
+  mouse.isDown = false;
 };
 
 resize();
 animate();
 
 window.addEventListener("click", onClick);
-window.addEventListener("pointerdown", onDown);
 window.addEventListener("pointermove", onMove);
 window.addEventListener("pointerup", onUp);
 window.addEventListener("resize", resize);

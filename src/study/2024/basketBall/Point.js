@@ -17,17 +17,20 @@ export class Point {
     };
     this.gravity = gravity;
     this.mass = this.radius * 1.3;
-    this.damping = 0.34;
+    this.damping = 0.47;
 
     this.isDown = false;
 
     this.isEnd = false;
-    this.shootForce = 0.3;
+    this.shootForce = 0.6;
     this.isOnceDistance = false;
 
     this.dist = 0;
     this.dx = 0;
     this.dy = 0;
+
+    this.floorCount = 0;
+    this.maxFloorCount = 7;
   }
 
   update(dt) {
@@ -47,9 +50,12 @@ export class Point {
   }
 
   reset() {
+    this.radius = this.originalRadius;
     this.isDown = false;
     this.isEnd = false;
     this.isOnceDistance = false;
+
+    this.floorCount = 0;
 
     this.dist = 0;
     this.dx = 0;
@@ -62,6 +68,14 @@ export class Point {
 
     this.oldX = this.x;
     this.oldY = this.y;
+
+    this.vx = 0;
+    this.vy = 0;
+
+    this.gravity = {
+      x: 0,
+      y: 0,
+    };
   }
 
   move(mouse, gap) {
@@ -89,7 +103,7 @@ export class Point {
     const dist = Math.sqrt(dx * dx + dy * dy);
 
     if (dist < this.radius + ball.radius) {
-      ball.y -= 0.04;
+      ball.y -= 0.024;
     }
   }
 
@@ -104,7 +118,7 @@ export class Point {
 
     const radian = Math.atan2(this.dy, this.dx);
 
-    const minRadius = this.originalRadius / 1.6;
+    const minRadius = this.originalRadius / 1.62;
     const maxRadius = this.originalRadius;
     const referenceY = innerHeight - this.radius;
 
@@ -120,12 +134,6 @@ export class Point {
       }
 
       this.isDown = true;
-    }
-
-    const diff = Math.abs(innerHeight - this.radius - this.y);
-
-    if (diff < 0.1) {
-      this.isEnd = true;
     }
   }
 
@@ -162,6 +170,12 @@ export class Point {
       this.y = innerHeight - this.radius;
 
       this.oldY = this.y + this.vy * this.damping;
+
+      if (this.floorCount > this.maxFloorCount) {
+        this.isEnd = true;
+      }
+
+      this.floorCount++;
     }
   }
 
