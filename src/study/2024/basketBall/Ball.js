@@ -2,7 +2,7 @@ import { Point } from "./Point.js";
 
 export class Ball extends Point {
   constructor(x, y, raidus, color) {
-    super(false, x, y, raidus, color);
+    super(false, x, y, raidus, color, { x: 0, y: 0 });
 
     this.image = new Image();
     this.image.src = "./ball.png";

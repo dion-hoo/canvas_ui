@@ -147,6 +147,14 @@ const drawBall = () => {
     ball.shooting(mouse);
 
     if (ball.isEnd) {
+      if (
+        ball.y < ball.radius ||
+        ball.x < ball.radius ||
+        ball.x > innerWidth - ball.radius
+      ) {
+        ball.setOriginalCroods();
+      }
+
       mouse.isStart = false;
       mouse.isDown = false;
       isPass = false;
@@ -236,8 +244,11 @@ const animate = (timeStamp) => {
   requestAnimationFrame(animate);
 };
 
-const onDown = () => {
+const onDown = (event) => {
   mouse.isDown = true;
+
+  mouse.x = event.clientX;
+  mouse.y = event.clientY;
 };
 
 const onMove = (event) => {
@@ -247,7 +258,6 @@ const onMove = (event) => {
 
 const onClick = () => {
   // canvas.classList.add("active");
-  // mouse.isStart = true;
 };
 
 const onUp = (event) => {

@@ -1,5 +1,5 @@
 export class Point {
-  constructor(isFixed, x, y, radius, color) {
+  constructor(isFixed, x, y, radius, color, gravity = { x: 0, y: 0.4 }) {
     this.isFixed = isFixed;
     this.x = x;
     this.y = y;
@@ -15,17 +15,14 @@ export class Point {
       x: 0,
       y: 0,
     };
-    this.gravity = {
-      x: 0,
-      y: 0.4,
-    };
+    this.gravity = gravity;
     this.mass = this.radius * 1.3;
     this.damping = 0.34;
 
     this.isDown = false;
 
     this.isEnd = false;
-    this.shootForce = 0.6;
+    this.shootForce = 0.3;
     this.isOnceDistance = false;
 
     this.dist = 0;
@@ -54,15 +51,17 @@ export class Point {
     this.isEnd = false;
     this.isOnceDistance = false;
 
-    // this.x = innerWidth * 0.5 - 30 / 2;
-    // this.y = innerHeight - 90;
-
-    // this.oldX = this.x;
-    // this.oldY = this.y;
-
     this.dist = 0;
     this.dx = 0;
     this.dy = 0;
+  }
+
+  setOriginalCroods() {
+    this.x = innerWidth * 0.5 - 30 / 2;
+    this.y = innerHeight - 90;
+
+    this.oldX = this.x;
+    this.oldY = this.y;
   }
 
   move(mouse, gap) {
@@ -116,6 +115,10 @@ export class Point {
       this.x += Math.cos(radian) * this.shootForce;
       this.y += Math.sin(radian) * this.shootForce;
     } else {
+      if (target.y > this.y) {
+        this.gravity.y = 0.4;
+      }
+
       this.isDown = true;
     }
 
