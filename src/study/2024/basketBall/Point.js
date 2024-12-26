@@ -103,7 +103,7 @@ export class Point {
     const dist = Math.sqrt(dx * dx + dy * dy);
 
     if (dist < this.radius + ball.radius) {
-      ball.y -= 0.024;
+      ball.y -= 0.028;
     }
   }
 

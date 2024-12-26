@@ -11,24 +11,85 @@ export class Ball extends Point {
     };
     this.isLoaded = false;
 
-    this.isGetTargetCoordinate = true;
-
+    this.isSetRotateDirection = true;
     this.rotateDirection = 1;
     this.angle = 0;
+
+    this.isRimPassed = false;
+    this.isPassProcessed = false;
+
+    this.resetFps = 4;
+    this.resetFpsTime = 1000 / this.resetFps;
+    this.resetTime = 0;
+  }
+
+  shouldResetTime = (timeStamp) => {
+    if (!this.resetTime) {
+      this.resetTime = timeStamp;
+    }
+
+    const now = timeStamp - this.resetTime;
+
+    this.resetTime++;
+
+    if (now > this.resetFpsTime) {
+      this.resetTime = timeStamp;
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  throw(timeStamp, mouse) {
+    this.shooting(mouse);
+
+    if (!this.isEnd) {
+      this.update(1);
+    }
+
+    if (
+      this.isEnd ||
+      this.x < this.radius ||
+      this.x > innerWidth - this.radius
+    ) {
+      const isStart = this.shouldResetTime(timeStamp);
+
+      if (isStart) {
+        mouse.isStart = false;
+        mouse.isDown = false;
+
+        this.isRmPassed = false;
+        this.isPassProcessed = false;
+
+        this.reset();
+        this.setOriginalCroods();
+
+        this.resetTime = null;
+      }
+    }
+  }
+
+  updatePassedBall() {
+    const overlapY = innerHeight * 0.2;
+
+    if (this.y + this.radius < overlapY && !this.isPassProcessed) {
+      this.isRmPassed = true;
+      this.isPassProcessed = true;
+    }
   }
 
   draw(ctx, target) {
     ctx.save();
     ctx.translate(this.x, this.y);
 
-    if (!this.isgetTargetCoordinate) {
+    if (!this.isSetRotateDirection) {
       const dx = target.x - this.x;
       const dy = target.y - this.y;
 
       const cross = this.vx * dy - this.vy * dx;
 
       this.rotateDirection = cross > 0 ? 1 : -1;
-      this.isGetTargetCoordinate = true;
+      this.isSetRotateDirection = true;
     }
 
     const speed = Math.hypot(this.vx, this.vy) * 0.01;
