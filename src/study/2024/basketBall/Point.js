@@ -1,12 +1,20 @@
+import { getDistance2 } from "./util.js";
+
 export class Point {
-  constructor(isFixed, x, y, radius, color, gravity = { x: 0, y: 0.4 }) {
+  constructor(
+    isFixed,
+    x,
+    y,
+    radius,
+    color = "#000",
+    gravity = { x: 0, y: 0.4 }
+  ) {
     this.isFixed = isFixed;
     this.x = x;
     this.y = y;
     this.oldX = x;
     this.oldY = y;
     this.radius = radius;
-    this.originalRadius = radius;
     this.color = color;
 
     this.vx = 0;
@@ -18,16 +26,6 @@ export class Point {
     this.gravity = gravity;
     this.mass = this.radius * 1.3;
     this.damping = 0.47;
-
-    this.isDown = false;
-
-    this.isEnd = false;
-    this.shootForce = 0.6;
-    this.isOnceDistance = false;
-
-    this.dist = 0;
-    this.dx = 0;
-    this.dy = 0;
 
     this.floorCount = 0;
     this.maxFloorCount = 7;
@@ -49,46 +47,14 @@ export class Point {
     }
   }
 
-  reset() {
-    this.radius = this.originalRadius;
-    this.isDown = false;
-    this.isEnd = false;
-    this.isOnceDistance = false;
+  move(mouse, gap, force = 1) {
+    const { dx, dy, distance } = getDistance2(mouse.x, mouse.y, this.x, this.y);
 
-    this.floorCount = 0;
-
-    this.dist = 0;
-    this.dx = 0;
-    this.dy = 0;
-  }
-
-  setOriginalCroods() {
-    this.x = innerWidth * 0.5 - 30 / 2;
-    this.y = innerHeight - 90;
-
-    this.oldX = this.x;
-    this.oldY = this.y;
-
-    this.vx = 0;
-    this.vy = 0;
-
-    this.gravity = {
-      x: 0,
-      y: 0,
-    };
-  }
-
-  move(mouse, gap) {
-    const dx = this.x - mouse.x;
-    const dy = this.y - mouse.y;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-
-    if (dist < gap) {
+    if (distance < gap) {
       const normal = {
-        x: dx / dist,
-        y: dy / dist,
+        x: dx / distance,
+        y: dy / distance,
       };
-      const force = 10;
 
       if (!this.isFixed) {
         this.x += force * normal.x;
@@ -97,58 +63,21 @@ export class Point {
     }
   }
 
-  resist(ball) {
-    const dx = this.x - ball.x;
-    const dy = this.y - ball.y;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-
-    if (dist < this.radius + ball.radius) {
-      ball.y -= 0.03;
-    }
-  }
-
-  shooting(target) {
-    if (!this.isOnceDistance) {
-      this.dx = target.x - this.x;
-      this.dy = target.y - this.y;
-
-      this.dist = Math.sqrt(this.dx * this.dx + this.dy * this.dy);
-      this.isOnceDistance = true;
-    }
-
-    const radian = Math.atan2(this.dy, this.dx);
-
-    const minRadius = this.originalRadius / 1.62;
-    const maxRadius = this.originalRadius;
-    const referenceY = innerHeight - this.radius;
-
-    this.radius =
-      maxRadius - (maxRadius - minRadius) * (1 - this.y / referenceY);
-
-    if (!this.isDown && target.y < this.y) {
-      this.x += Math.cos(radian) * this.shootForce;
-      this.y += Math.sin(radian) * this.shootForce;
-    } else {
-      if (target.y > this.y) {
-        this.gravity.y = 0.4;
-      }
-
-      this.isDown = true;
-    }
-  }
-
   constraints(ctx, target, gap, isDraw = true) {
-    const dx = target.x - this.x;
-    const dy = target.y - this.y;
+    const { dx, dy, distance } = getDistance2(
+      this.x,
+      this.y,
+      target.x,
+      target.y
+    );
 
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    const diff = dist - gap;
-    const percent = diff / dist / 2;
+    const diff = distance - gap;
+    const percent = diff / distance / 2;
 
     const tx = percent * dx;
     const ty = percent * dy;
 
-    if (dist > gap) {
+    if (distance > gap) {
       if (!this.isFixed) {
         this.x += tx;
         this.y += ty;
@@ -169,7 +98,7 @@ export class Point {
     }
   }
 
-  windowBounce() {
+  windowRebound() {
     if (this.y > innerHeight - this.radius) {
       this.y = innerHeight - this.radius;
 

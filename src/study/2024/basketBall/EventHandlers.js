@@ -52,7 +52,7 @@ export class EventHandlers {
 
     this.setMousePoint(event);
 
-    this.ball.isSetRotateDirection = false;
+    this.ball.rotateDirectionLocked = false;
   }
 
   registerEvents() {

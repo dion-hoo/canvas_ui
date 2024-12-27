@@ -1,10 +1,10 @@
-import { Point } from "./Point.js";
-import { Rim } from "./Rim.js";
+import { Hoop } from "./Hoop.js";
+import { getDistance } from "./util.js";
 
-export class Net extends Point {
-  constructor(isFixed, x, y, raidus) {
-    super(isFixed, x, y, raidus, "#000");
-
+export class Net {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
     this.rowsArray = [];
     this.nets = [];
 
@@ -18,30 +18,22 @@ export class Net extends Point {
         : this.rowsArray.push(this.minRows);
     }
 
-    this.rowGap = 28;
-    this.columnGap = 9;
+    this.rowGap = 27;
+    this.columnGap = 8;
     this.netWidth = 0;
-    this.netDistance = {
-      cloest: null,
-      next: null,
-      inverse: null,
-    };
 
-    this.rim = null;
+    this.initNet();
   }
 
-  init(positionX, positionY, rimColor) {
-    this.x = positionX;
-    this.y = positionY;
-
-    let accY = positionY;
+  initNet() {
+    let accY = this.y;
 
     for (let h = 0; h < this.totalRow; h++) {
       const length = this.rowsArray[h];
-      const columnGap = h === 0 ? this.columnGap * 10 : this.columnGap;
+      const columnGap = h === 0 ? this.columnGap * 8 : this.columnGap;
 
       for (let w = 0; w < length; w++) {
-        const rowGap = h === 0 ? this.rowGap * 1.9 : this.rowGap;
+        const rowGap = h === 0 ? this.rowGap * 1.6 : this.rowGap;
         const width = rowGap * length;
 
         if (h === 0) {
@@ -53,36 +45,11 @@ export class Net extends Point {
         const radius = 1;
         const isFixed = h === 0;
 
-        this.nets.push(new Net(isFixed, x, y, radius, this.color));
+        this.nets.push(new Hoop(isFixed, x, y, radius));
       }
 
       accY += columnGap;
     }
-
-    this.initRim(rimColor);
-  }
-
-  initRim(rimColor) {
-    const padding = 6;
-    const rimX = this.x - this.netWidth / 2 + this.rowGap / 2;
-    const rimY = this.y;
-
-    this.rim = new Rim(
-      rimX,
-      rimY,
-      padding,
-      this.netWidth,
-      this.rowGap,
-      rimColor
-    );
-  }
-
-  getDistance(p1, p2) {
-    const dx = p2.x - p1.x;
-    const dy = p2.y - p1.y;
-    const distance = Math.hypot(dx, dy);
-
-    return distance;
   }
 
   drawNet(ctx, ball, touch, isPass) {
@@ -106,14 +73,13 @@ export class Net extends Point {
         const isNoConnect = even && lastItem;
 
         if (isPass) {
-          net.move(ball, this.columnGap);
-          net.resist(ball);
+          net.move(ball, this.columnGap, 20);
+          net.hoopResistance(ball);
         }
 
         net.update(1);
-
-        net.move(touch, this.columnGap);
-        net.windowBounce();
+        net.move(touch, this.columnGap, 20);
+        net.windowRebound();
 
         if (y !== 0) {
           net.draw(ctx);
@@ -121,27 +87,21 @@ export class Net extends Point {
 
         const nextLineNet = this.nets[index + 11];
         if ((index % 11 === 0 || index % 11 === 5) && !!nextLineNet) {
-          if (!net.netDistance.next) {
-            net.netDistance.next = this.getDistance(net, nextLineNet);
+          if (!net.hoopDistance.next) {
+            net.hoopDistance.next = getDistance(net, nextLineNet).distance;
           }
 
-          net.constraints(ctx, nextLineNet, net.netDistance.next);
+          net.constraints(ctx, nextLineNet, net.hoopDistance.next);
         }
 
         if (isSameRow && !isNoConnect) {
           if (cloestColumn) {
-            if (!net.netDistance.cloest) {
-              net.netDistance.cloest = this.getDistance(net, cloestColumn);
+            if (!net.hoopDistance.cloest) {
+              net.hoopDistance.cloest = getDistance(net, cloestColumn).distance;
             }
 
-            net.constraints(ctx, cloestColumn, net.netDistance.cloest);
+            net.constraints(ctx, cloestColumn, net.hoopDistance.cloest);
           }
-        }
-
-        // 마지막 줄줄
-        const nextNets = this.nets[index + 1];
-        if (y === this.totalRow - 1 && !!nextNets) {
-          net.constraints(ctx, nextNets, this.rowGap, false);
         }
       }
 
@@ -156,16 +116,13 @@ export class Net extends Point {
         if (!net) continue;
 
         if (cloestColumn && !isNoConnect) {
-          if (!net.netDistance.inverse) {
-            net.netDistance.inverse = this.getDistance(net, cloestColumn);
+          if (!net.hoopDistance.inverse) {
+            net.hoopDistance.inverse = getDistance(net, cloestColumn).distance;
           }
 
-          net.constraints(ctx, cloestColumn, net.netDistance.inverse);
+          net.constraints(ctx, cloestColumn, net.hoopDistance.inverse);
         }
       }
     }
-
-    // 농구 림
-    // this.rim.draw(ctx);
   }
 }

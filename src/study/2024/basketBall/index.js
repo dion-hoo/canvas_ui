@@ -1,4 +1,5 @@
 import { Net } from "./Net.js";
+import { NetManager } from "./NetManager.js";
 import { Ball } from "./Ball.js";
 import { Smoke } from "./smoke.js";
 import { GuideLine } from "./GuideLine.js";
@@ -8,7 +9,7 @@ const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 
 let ball = null;
-let netGroup = [];
+let netManager = [];
 let guideLine = null;
 let eventHandlers = null;
 let smokes = [];
@@ -40,11 +41,11 @@ const createBall = () => {
   const x = innerWidth * 0.5;
   const y = innerHeight - radius;
 
-  ball = new Ball(x, y, radius, "orange");
+  ball = new Ball(x, y, radius);
 };
 
-const createNetGroup = () => {
-  netGroup = [];
+const createnetManager = () => {
+  netManager = [];
 
   const colors = ["#1c9", "#ff0000", "#0044ff"];
   const length = 1;
@@ -52,10 +53,9 @@ const createNetGroup = () => {
   for (let i = 0; i < length; i++) {
     const x = (innerWidth / (length + 1)) * (i + 1);
     const y = innerHeight * 0.2;
-    const color = colors[i];
+    const rimColor = colors[i];
 
-    netGroup[i] = new Net();
-    netGroup[i].init(x, y, color);
+    netManager[i] = new NetManager(x, y, rimColor);
   }
 };
 
@@ -76,14 +76,14 @@ const createEventHandlers = () => {
 
 const initialize = () => {
   createBall();
-  createNetGroup();
+  createnetManager();
   createGuideLine();
   createEventHandlers();
 };
 
-const drawNet = (touch) => {
-  netGroup.forEach((net) => {
-    net.drawNet(ctx, ball, touch, ball.isRmPassed);
+const drawNetManager = (touch) => {
+  netManager.forEach((net) => {
+    net.draw(ctx, ball, touch, ball.isRimPassed);
   });
 };
 
@@ -93,7 +93,7 @@ const drawBall = (timeStamp, mouse) => {
   }
 
   ball.updatePassedBall();
-  ball.windowBounce();
+  ball.windowRebound();
   ball.draw(ctx, mouse);
 };
 
@@ -108,11 +108,11 @@ const animate = (timeStamp) => {
   }
 
   if (!ball.isRmPassed) {
-    drawNet(touch);
+    drawNetManager(touch);
     drawBall(timeStamp, mouse);
   } else {
     drawBall(timeStamp, mouse);
-    drawNet(touch);
+    drawNetManager(touch);
   }
 
   // if (!currentTime) {
