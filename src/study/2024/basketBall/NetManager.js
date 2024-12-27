@@ -26,6 +26,7 @@ export class NetManager {
 
   draw(ctx, ball, touch, isRmPassed) {
     // 농구 림
+    this.rim.drawRimArea(ctx);
     this.rim.draw(ctx);
 
     this.net.drawNet(ctx, ball, touch, isRmPassed);

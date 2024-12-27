@@ -14,6 +14,17 @@ export class GuideLine {
     ctx.moveTo(this.x, this.y);
     ctx.lineTo(target.x, target.y);
     ctx.stroke();
+
+    ctx.restore();
+
+    ctx.save();
+
+    ctx.globalAlpha = 0.8;
+
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+    ctx.arc(target.x, target.y - 13, 10, 0, Math.PI * 2);
+    ctx.fill();
     ctx.restore();
   }
 }

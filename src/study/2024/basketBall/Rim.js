@@ -7,6 +7,31 @@ export class Rim {
     this.netGap = netGap;
     this.color = color;
     this.size = 10;
+
+    this.hitRimArea = [];
+
+    this.hitRimArea[0] = {
+      x: this.x,
+      y: this.y,
+    };
+    this.hitRimArea[1] = {
+      x: this.x,
+      y: this.y + 100,
+    };
+  }
+
+  drawRimArea(ctx) {
+    for (let i = 0; i < this.hitRimArea.length - 1; i++) {
+      const p1 = this.hitRimArea[i];
+      const p2 = this.hitRimArea[i + 1];
+
+      // ctx.beginPath();
+      // ctx.strokeStyle = "blue";
+      // ctx.lineWidth = 2;
+      // ctx.moveTo(p1.x, p1.y);
+      // ctx.lineTo(p2.x, p2.y);
+      // ctx.stroke();
+    }
   }
 
   draw(ctx) {

@@ -35,16 +35,25 @@ const createBall = () => {
   ball = new Ball(x, y, radius);
 };
 
-const createnetManager = () => {
+const createNetManager = () => {
   netManager = [];
 
+  // true false
   const length = 1;
+  const isRandomColor = false;
+
+  const getRandomRgbColor = () => {
+    const r = Math.floor(Math.random() * 256);
+    const g = Math.floor(Math.random() * 256);
+    const b = Math.floor(Math.random() * 256);
+    return `rgb(${r}, ${g}, ${b})`;
+  };
 
   for (let i = 0; i < length; i++) {
     const x = (innerWidth / (length + 1)) * (i + 1);
     const y = innerHeight * 0.2;
     const strokeColor = "#999";
-    const rimColor = "#ea826b";
+    const rimColor = isRandomColor ? getRandomRgbColor() : "#ea826b";
 
     netManager[i] = new NetManager(x, y, strokeColor, rimColor);
   }
@@ -68,7 +77,7 @@ const createEventHandlers = () => {
 
 const initialize = () => {
   createBall();
-  createnetManager();
+  createNetManager();
   createGuideLine();
   createEventHandlers();
 };
