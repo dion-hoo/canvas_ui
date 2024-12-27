@@ -38,12 +38,12 @@ const createBall = () => {
 const createnetManager = () => {
   netManager = [];
 
-  const length = 5;
+  const length = 1;
 
   for (let i = 0; i < length; i++) {
     const x = (innerWidth / (length + 1)) * (i + 1);
     const y = innerHeight * 0.2;
-    const strokeColor = "#fff";
+    const strokeColor = "#999";
     const rimColor = "#ea826b";
 
     netManager[i] = new NetManager(x, y, strokeColor, rimColor);
@@ -56,8 +56,9 @@ const createGuideLine = () => {
   const padding = 20;
   const x = innerWidth * 0.5;
   const y = innerHeight - ball.radius * 2 - padding;
+  const color = "#333";
 
-  guideLine = new GuideLine(x, y);
+  guideLine = new GuideLine(x, y, color);
 };
 
 const createEventHandlers = () => {
@@ -98,7 +99,7 @@ const animate = (timeStamp) => {
     guideLine.draw(ctx, mouse);
   }
 
-  if (!ball.isRmPassed) {
+  if (!ball.isRimPassed) {
     drawNetManager(touch);
     drawBall(timeStamp, mouse);
   } else {

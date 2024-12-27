@@ -58,6 +58,8 @@ export class Ball extends Point {
     this.isShooting = false;
     this.isEnd = false;
 
+    this.floorCount = 0;
+
     this.dx = 0;
     this.dy = 0;
   }
@@ -114,7 +116,7 @@ export class Ball extends Point {
 
     const radian = Math.atan2(this.dy, this.dx);
 
-    const minRadius = this.initialRadius / 1.62;
+    const minRadius = this.initialRadius / 1.6;
     const maxRadius = this.initialRadius;
     const referenceY = innerHeight - this.radius;
 

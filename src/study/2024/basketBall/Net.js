@@ -20,8 +20,8 @@ export class Net {
         : this.rowsArray.push(this.minRows);
     }
 
-    this.rowGap = 27;
-    this.columnGap = 8;
+    this.rowGap = 23;
+    this.columnGap = 7;
     this.netWidth = 0;
 
     this.initNet();
@@ -75,7 +75,7 @@ export class Net {
         const isNoConnect = even && lastItem;
 
         if (isPass) {
-          net.move(ball, this.columnGap, 20);
+          net.move(ball, this.columnGap * 5, 4);
           net.hoopResistance(ball);
         }
 
