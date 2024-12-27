@@ -2,12 +2,13 @@ import { Net } from "./Net.js";
 import { Rim } from "./Rim.js";
 
 export class NetManager {
-  constructor(x, y, rimColor) {
+  constructor(x, y, strokeColor, rimColor) {
     this.x = x;
     this.y = y;
+    this.strokeColor = strokeColor;
     this.rimColor = rimColor;
 
-    this.net = new Net(x, y);
+    this.net = new Net(x, y, strokeColor);
 
     const padding = 6;
     const rimX = this.net.x - this.net.netWidth / 2 + this.net.rowGap / 2;

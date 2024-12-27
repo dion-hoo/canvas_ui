@@ -2,9 +2,11 @@ import { Hoop } from "./Hoop.js";
 import { getDistance } from "./util.js";
 
 export class Net {
-  constructor(x, y) {
+  constructor(x, y, strokeColor) {
     this.x = x;
     this.y = y;
+    this.strokeColor = strokeColor;
+
     this.rowsArray = [];
     this.nets = [];
 
@@ -30,7 +32,7 @@ export class Net {
 
     for (let h = 0; h < this.totalRow; h++) {
       const length = this.rowsArray[h];
-      const columnGap = h === 0 ? this.columnGap * 8 : this.columnGap;
+      const columnGap = h === 0 ? this.columnGap * 7.9 : this.columnGap;
 
       for (let w = 0; w < length; w++) {
         const rowGap = h === 0 ? this.rowGap * 1.6 : this.rowGap;
@@ -45,7 +47,7 @@ export class Net {
         const radius = 1;
         const isFixed = h === 0;
 
-        this.nets.push(new Hoop(isFixed, x, y, radius));
+        this.nets.push(new Hoop(isFixed, x, y, radius, this.strokeColor));
       }
 
       accY += columnGap;
@@ -91,7 +93,12 @@ export class Net {
             net.hoopDistance.next = getDistance(net, nextLineNet).distance;
           }
 
-          net.constraints(ctx, nextLineNet, net.hoopDistance.next);
+          net.constraints(
+            ctx,
+            nextLineNet,
+            net.hoopDistance.next,
+            this.strokeColor
+          );
         }
 
         if (isSameRow && !isNoConnect) {
@@ -100,7 +107,12 @@ export class Net {
               net.hoopDistance.cloest = getDistance(net, cloestColumn).distance;
             }
 
-            net.constraints(ctx, cloestColumn, net.hoopDistance.cloest);
+            net.constraints(
+              ctx,
+              cloestColumn,
+              net.hoopDistance.cloest,
+              this.strokeColor
+            );
           }
         }
       }
@@ -120,7 +132,12 @@ export class Net {
             net.hoopDistance.inverse = getDistance(net, cloestColumn).distance;
           }
 
-          net.constraints(ctx, cloestColumn, net.hoopDistance.inverse);
+          net.constraints(
+            ctx,
+            cloestColumn,
+            net.hoopDistance.inverse,
+            this.strokeColor
+          );
         }
       }
     }

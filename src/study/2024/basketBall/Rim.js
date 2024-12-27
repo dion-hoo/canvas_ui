@@ -11,13 +11,18 @@ export class Rim {
 
   draw(ctx) {
     ctx.save();
-    ctx.strokeStyle = this.color;
-    ctx.lineWidth = this.lineWidth;
-    ctx.lineCap = "round";
+
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+    ctx.fillRect(this.x, this.y, this.netWidth - this.netGap, -10);
+    ctx.fill();
+
+    ctx.strokeStyle = "rgba(0, 0, 0, 0.7)";
     ctx.beginPath();
     ctx.moveTo(this.x, this.y - this.padding);
     ctx.lineTo(this.x + this.netWidth - this.netGap, this.y - this.padding);
     ctx.stroke();
+
     ctx.restore();
   }
 }

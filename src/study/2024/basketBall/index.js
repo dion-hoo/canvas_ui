@@ -1,7 +1,5 @@
-import { Net } from "./Net.js";
 import { NetManager } from "./NetManager.js";
 import { Ball } from "./Ball.js";
-import { Smoke } from "./smoke.js";
 import { GuideLine } from "./GuideLine.js";
 import { EventHandlers } from "./EventHandlers.js";
 
@@ -12,13 +10,6 @@ let ball = null;
 let netManager = [];
 let guideLine = null;
 let eventHandlers = null;
-let smokes = [];
-let smokes2 = [];
-
-// time
-const fps = 148;
-const fpsTime = 1000 / fps;
-let currentTime = 0;
 
 const resize = () => {
   const ratio = 1; //devicePixelRatio;
@@ -47,15 +38,15 @@ const createBall = () => {
 const createnetManager = () => {
   netManager = [];
 
-  const colors = ["#1c9", "#ff0000", "#0044ff"];
-  const length = 1;
+  const length = 5;
 
   for (let i = 0; i < length; i++) {
     const x = (innerWidth / (length + 1)) * (i + 1);
     const y = innerHeight * 0.2;
-    const rimColor = colors[i];
+    const strokeColor = "#fff";
+    const rimColor = "#ea826b";
 
-    netManager[i] = new NetManager(x, y, rimColor);
+    netManager[i] = new NetManager(x, y, strokeColor, rimColor);
   }
 };
 
@@ -114,53 +105,6 @@ const animate = (timeStamp) => {
     drawBall(timeStamp, mouse);
     drawNetManager(touch);
   }
-
-  // if (!currentTime) {
-  //   currentTime = timeStamp;
-  // }
-  // const now = timeStamp - currentTime;
-
-  // if (now > fpsTime && ball.isRmPassed) {
-  //   for (let i = 0; i < 10; i++) {
-  //     const x = 0;
-  //     const y = innerHeight;
-  //     const radius = 100;
-
-  //     smokes.push(new Smoke(x, y, radius));
-  //   }
-
-  //   for (let i = 0; i < 10; i++) {
-  //     const x = innerWidth;
-  //     const y = innerHeight;
-  //     const radius = 100;
-
-  //     smokes2.push(new Smoke(x, y, radius));
-  //   }
-
-  //   currentTime = timeStamp;
-  // }
-
-  // smokes.forEach((smoke, index) => {
-  //   smoke.move();
-  //   smoke.moveMouse(touch);
-  //   smoke.draw(ctx);
-
-  //   if (smoke.isEnd) {
-  //     smokes.splice(index, 1);
-  //   }
-  // });
-
-  // smokes2.forEach((smoke, index) => {
-  //   smoke.move();
-  //   smoke.moveMouse(touch);
-  //   smoke.draw(ctx);
-
-  //   if (smoke.isEnd) {
-  //     smokes2.splice(index, 1);
-  //   }
-  // });
-
-  // currentTime++;
 
   requestAnimationFrame(animate);
 };

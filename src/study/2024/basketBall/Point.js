@@ -47,7 +47,7 @@ export class Point {
     }
   }
 
-  move(mouse, gap, force = 1) {
+  move(mouse, gap, force) {
     const { dx, dy, distance } = getDistance2(mouse.x, mouse.y, this.x, this.y);
 
     if (distance < gap) {
@@ -63,7 +63,7 @@ export class Point {
     }
   }
 
-  constraints(ctx, target, gap, isDraw = true) {
+  constraints(ctx, target, gap, strokeColor, isDraw = true) {
     const { dx, dy, distance } = getDistance2(
       this.x,
       this.y,
@@ -90,7 +90,7 @@ export class Point {
     }
 
     if (isDraw) {
-      ctx.strokeStyle = "#fff";
+      ctx.strokeStyle = strokeColor;
       ctx.beginPath();
       ctx.moveTo(this.x, this.y);
       ctx.lineTo(target.x, target.y);
