@@ -103,7 +103,7 @@ export class Point {
     const dist = Math.sqrt(dx * dx + dy * dy);
 
     if (dist < this.radius + ball.radius) {
-      ball.y -= 0.028;
+      ball.y -= 0.03;
     }
   }
 
@@ -137,7 +137,7 @@ export class Point {
     }
   }
 
-  constraints(ctx, target, gap) {
+  constraints(ctx, target, gap, isDraw = true) {
     const dx = target.x - this.x;
     const dy = target.y - this.y;
 
@@ -148,21 +148,25 @@ export class Point {
     const tx = percent * dx;
     const ty = percent * dy;
 
-    if (!this.isFixed) {
-      this.x += tx;
-      this.y += ty;
+    if (dist > gap) {
+      if (!this.isFixed) {
+        this.x += tx;
+        this.y += ty;
+      }
+
+      if (!target.isFixed) {
+        target.x -= tx;
+        target.y -= ty;
+      }
     }
 
-    if (!target.isFixed) {
-      target.x -= tx;
-      target.y -= ty;
+    if (isDraw) {
+      ctx.strokeStyle = "#fff";
+      ctx.beginPath();
+      ctx.moveTo(this.x, this.y);
+      ctx.lineTo(target.x, target.y);
+      ctx.stroke();
     }
-
-    ctx.strokeStyle = "#fff";
-    ctx.beginPath();
-    ctx.moveTo(this.x, this.y);
-    ctx.lineTo(target.x, target.y);
-    ctx.stroke();
   }
 
   windowBounce() {

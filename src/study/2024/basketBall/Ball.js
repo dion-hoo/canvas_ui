@@ -83,18 +83,26 @@ export class Ball extends Point {
     ctx.translate(this.x, this.y);
 
     if (!this.isSetRotateDirection) {
-      const dx = target.x - this.x;
-      const dy = target.y - this.y;
+      const vec1 = {
+        x: target.x - this.x,
+        y: target.y - this.y,
+      };
+      const vec2 = {
+        x: innerWidth * 0.5 - this.x,
+        y: 0 - this.y,
+      };
 
-      const cross = this.vx * dy - this.vy * dx;
+      const cross = vec1.x * vec2.y - vec1.y * vec2.x;
 
-      this.rotateDirection = cross > 0 ? 1 : -1;
+      this.rotateDirection = cross > 0 ? -1 : 1;
       this.isSetRotateDirection = true;
     }
 
     const speed = Math.hypot(this.vx, this.vy) * 0.01;
 
-    this.angle += speed * this.rotateDirection;
+    if (!this.isEnd) {
+      this.angle += speed * this.rotateDirection;
+    }
 
     ctx.rotate(this.angle);
 

@@ -6,8 +6,8 @@ export class GuideLine {
 
   draw(ctx, target) {
     ctx.save();
-    ctx.setLineDash([4, 4]);
-    ctx.strokeStyle = "#aaa";
+    ctx.setLineDash([5, 5]);
+    ctx.strokeStyle = "#fff";
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(this.x, this.y);

@@ -20,7 +20,7 @@ const fpsTime = 1000 / fps;
 let currentTime = 0;
 
 const resize = () => {
-  const ratio = 1;
+  const ratio = 1; //devicePixelRatio;
 
   canvas.width = innerWidth * ratio;
   canvas.height = innerHeight * ratio;
@@ -46,8 +46,17 @@ const createBall = () => {
 const createNetGroup = () => {
   netGroup = [];
 
-  netGroup[0] = new Net();
-  netGroup[0].init(innerWidth / 2, innerHeight * 0.2, "#ff0000");
+  const colors = ["#1c9", "#ff0000", "#0044ff"];
+  const length = 1;
+
+  for (let i = 0; i < length; i++) {
+    const x = (innerWidth / (length + 1)) * (i + 1);
+    const y = innerHeight * 0.2;
+    const color = colors[i];
+
+    netGroup[i] = new Net();
+    netGroup[i].init(x, y, color);
+  }
 };
 
 const createGuideLine = () => {
@@ -73,7 +82,9 @@ const initialize = () => {
 };
 
 const drawNet = (touch) => {
-  netGroup[0].drawNet(ctx, ball, touch, ball.isRmPassed);
+  netGroup.forEach((net) => {
+    net.drawNet(ctx, ball, touch, ball.isRmPassed);
+  });
 };
 
 const drawBall = (timeStamp, mouse) => {

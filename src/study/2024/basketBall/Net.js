@@ -2,59 +2,87 @@ import { Point } from "./Point.js";
 import { Rim } from "./Rim.js";
 
 export class Net extends Point {
-  constructor(isFixed, x, y, raidus, color) {
-    super(isFixed, x, y, raidus, color);
+  constructor(isFixed, x, y, raidus) {
+    super(isFixed, x, y, raidus, "#000");
 
-    this.maxRow = 7;
-    this.minRow = 6;
-
-    this.rowsArray = [
-      this.maxRow,
-      this.minRow,
-      this.maxRow,
-      this.minRow,
-      this.maxRow,
-      this.minRow,
-      this.maxRow,
-      this.minRow,
-    ];
-    this.totalRow = 7;
+    this.rowsArray = [];
     this.nets = [];
 
-    this.netGap = 30;
-    this.netHalfGap = this.netGap / 2;
-    this.collumnGap = Math.hypot(this.netGap, this.netHalfGap);
+    this.totalRow = 9;
+    this.maxRows = 6;
+    this.minRows = 5;
 
-    this.positionX = 0;
-    this.positionY = 0;
-    this.width = 0;
+    for (let i = 0; i < this.totalRow; i++) {
+      i % 2 === 0
+        ? this.rowsArray.push(this.maxRows)
+        : this.rowsArray.push(this.minRows);
+    }
+
+    this.rowGap = 28;
+    this.columnGap = 9;
+    this.netWidth = 0;
+    this.netDistance = {
+      cloest: null,
+      next: null,
+      inverse: null,
+    };
 
     this.rim = null;
   }
 
   init(positionX, positionY, rimColor) {
-    this.positionX = positionX;
-    this.positionY = positionY;
+    this.x = positionX;
+    this.y = positionY;
+
+    let accY = positionY;
 
     for (let h = 0; h < this.totalRow; h++) {
       const length = this.rowsArray[h];
+      const columnGap = h === 0 ? this.columnGap * 10 : this.columnGap;
 
       for (let w = 0; w < length; w++) {
-        this.width = this.netGap * length;
+        const rowGap = h === 0 ? this.rowGap * 1.9 : this.rowGap;
+        const width = rowGap * length;
 
-        const x = positionX - this.width / 2 + this.netGap * w;
-        const y = positionY + this.netGap * h;
+        if (h === 0) {
+          this.netWidth = rowGap * length;
+        }
+
+        const x = this.x + rowGap * w - width / 2 + rowGap / 2;
+        const y = accY + columnGap * h;
         const radius = 1;
         const isFixed = h === 0;
 
         this.nets.push(new Net(isFixed, x, y, radius, this.color));
       }
+
+      accY += columnGap;
     }
 
-    const rimX = this.positionX - this.width / 2;
-    const rimY = this.positionY;
+    this.initRim(rimColor);
+  }
 
-    this.rim = new Rim(rimX, rimY, this.width, this.netGap, rimColor);
+  initRim(rimColor) {
+    const padding = 6;
+    const rimX = this.x - this.netWidth / 2 + this.rowGap / 2;
+    const rimY = this.y;
+
+    this.rim = new Rim(
+      rimX,
+      rimY,
+      padding,
+      this.netWidth,
+      this.rowGap,
+      rimColor
+    );
+  }
+
+  getDistance(p1, p2) {
+    const dx = p2.x - p1.x;
+    const dy = p2.y - p1.y;
+    const distance = Math.hypot(dx, dy);
+
+    return distance;
   }
 
   drawNet(ctx, ball, touch, isPass) {
@@ -71,26 +99,49 @@ export class Net extends Point {
 
         const net = this.nets[index];
         const isSameRow = index < length;
-        const cloestColumn = this.nets[index + this.maxRow];
+        const cloestColumn = this.nets[index + this.maxRows];
 
         const even = y % 2 === 0;
         const lastItem = x === totalRows - 1;
-        const isNoDraw = even && lastItem;
+        const isNoConnect = even && lastItem;
 
         if (isPass) {
-          net.move(ball, this.netGap);
+          net.move(ball, this.columnGap);
           net.resist(ball);
         }
 
         net.update(1);
 
-        net.move(touch, this.netGap);
+        net.move(touch, this.columnGap);
         net.windowBounce();
 
-        if (isSameRow && !isNoDraw) {
-          if (cloestColumn) {
-            net.constraints(ctx, cloestColumn, this.collumnGap);
+        if (y !== 0) {
+          net.draw(ctx);
+        }
+
+        const nextLineNet = this.nets[index + 11];
+        if ((index % 11 === 0 || index % 11 === 5) && !!nextLineNet) {
+          if (!net.netDistance.next) {
+            net.netDistance.next = this.getDistance(net, nextLineNet);
           }
+
+          net.constraints(ctx, nextLineNet, net.netDistance.next);
+        }
+
+        if (isSameRow && !isNoConnect) {
+          if (cloestColumn) {
+            if (!net.netDistance.cloest) {
+              net.netDistance.cloest = this.getDistance(net, cloestColumn);
+            }
+
+            net.constraints(ctx, cloestColumn, net.netDistance.cloest);
+          }
+        }
+
+        // 마지막 줄줄
+        const nextNets = this.nets[index + 1];
+        if (y === this.totalRow - 1 && !!nextNets) {
+          net.constraints(ctx, nextNets, this.rowGap, false);
         }
       }
 
@@ -99,19 +150,22 @@ export class Net extends Point {
         const net = this.nets[invX];
         const even = y % 2 === 0;
         const lastItem = invX === startIndex;
-        const isNoDraw = even && lastItem;
+        const isNoConnect = even && lastItem;
+        const cloestColumn = this.nets[invX + this.minRows];
 
         if (!net) continue;
 
-        const cloestColumn = this.nets[invX + this.minRow];
+        if (cloestColumn && !isNoConnect) {
+          if (!net.netDistance.inverse) {
+            net.netDistance.inverse = this.getDistance(net, cloestColumn);
+          }
 
-        if (cloestColumn && !isNoDraw) {
-          net.constraints(ctx, cloestColumn, this.collumnGap);
+          net.constraints(ctx, cloestColumn, net.netDistance.inverse);
         }
       }
     }
 
     // 농구 림
-    this.rim.draw(ctx);
+    // this.rim.draw(ctx);
   }
 }
