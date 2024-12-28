@@ -21,3 +21,29 @@ export const getDistance2 = (x1, y1, x2, y2) => {
     distance,
   };
 };
+
+export const projection = (p, d1, d2) => {
+  const v1 = {
+    x: p.x - d1.x,
+    y: p.y - d1.y,
+  };
+
+  const v2 = {
+    x: d2.x - d1.x,
+    y: d2.y - d1.y,
+  };
+
+  const dot = v1.x * v2.x + v1.y * v2.y;
+  const mag = v2.x * v2.x + v2.y * v2.y;
+  const scale = Math.max(0, Math.min(1, dot / mag));
+
+  const proj = {
+    x: d1.x + scale * v2.x,
+    y: d1.y + scale * v2.y,
+  };
+
+  return {
+    x: proj.x,
+    y: proj.y,
+  };
+};

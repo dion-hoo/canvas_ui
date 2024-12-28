@@ -1,40 +1,77 @@
+import { projection } from "./util.js";
+
 export class Rim {
-  constructor(x, y, padding, netWidth, netGap, color) {
+  constructor(x, y, padding, netWidth, rowGap, columnGap, color) {
     this.x = x;
     this.y = y;
     this.padding = padding;
     this.netWidth = netWidth;
-    this.netGap = netGap;
+    this.rowGap = rowGap;
+    this.columnGap = columnGap;
     this.color = color;
     this.size = 10;
 
     this.boardWidth = 60;
     this.boardHeight = 30;
 
-    this.hitRimArea = [];
-
-    this.hitRimArea[0] = {
-      x: this.x,
-      y: this.y,
-    };
-    this.hitRimArea[1] = {
-      x: this.x,
-      y: this.y + 100,
-    };
+    const sideSize = 30;
+    this.addCollsitionPoint = [
+      { x: this.x + sideSize, y: this.y },
+      { x: this.x + this.netWidth - sideSize, y: this.y },
+    ];
   }
 
-  drawRimArea(ctx) {
-    for (let i = 0; i < this.hitRimArea.length - 1; i++) {
-      const p1 = this.hitRimArea[i];
-      const p2 = this.hitRimArea[i + 1];
+  collision(ctx, collisionPoint, ball) {
+    ctx.strokeStyle = "blue";
+    ctx.lineWidth = 10;
 
-      // ctx.beginPath();
-      // ctx.strokeStyle = "blue";
-      // ctx.lineWidth = 2;
-      // ctx.moveTo(p1.x, p1.y);
-      // ctx.lineTo(p2.x, p2.y);
-      // ctx.stroke();
+    const point = [...this.addCollsitionPoint, ...collisionPoint];
+
+    ctx.beginPath();
+    for (let i = 0; i < point.length; i++) {
+      const p1 = point[i];
+      const p2 = point[i + 2];
+
+      if (!!p2) {
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+
+        if (ball.isRimPassed) {
+          const { x, y } = projection(ball, p1, p2);
+
+          const dx = ball.x - x;
+          const dy = ball.y - y;
+          const dist = Math.hypot(dx, dy);
+          const normal = {
+            x: dx / dist,
+            y: dy / dist,
+          };
+
+          if (dist < ball.radius) {
+            const normalVector = {
+              x: normal.x * ball.radius,
+              y: normal.y * ball.radius,
+            };
+
+            const dot = ball.vx * normal.x + ball.vy * normal.y;
+
+            ball.vx += -2 * dot * normal.x;
+            ball.vy += -2 * dot * normal.y;
+
+            const damping = 0.89;
+            ball.vx *= damping;
+            ball.vy *= damping;
+
+            ball.x = x + normalVector.x;
+            ball.y = y + normalVector.y;
+
+            ball.oldX = ball.x - ball.vx;
+            ball.oldY = ball.y - ball.vy;
+          }
+        }
+      }
     }
+    ctx.stroke();
   }
 
   pedestal(ctx) {
@@ -50,7 +87,7 @@ export class Rim {
     ctx.lineWidth = 5;
     ctx.moveTo(this.x, this.y - this.size / 2);
     ctx.lineTo(
-      this.x + this.netWidth / 2 - this.netGap,
+      this.x + this.netWidth / 2 - this.rowGap,
       this.y + this.boardHeight - this.boardHeight * 0.25
     );
     ctx.stroke();
@@ -61,7 +98,7 @@ export class Rim {
     ctx.lineWidth = 5;
     ctx.moveTo(this.x + this.netWidth, this.y - this.size / 2);
     ctx.lineTo(
-      this.x + this.netWidth - this.netWidth / 2 + this.netGap,
+      this.x + this.netWidth - this.netWidth / 2 + this.rowGap,
       this.y + this.boardHeight - this.boardHeight * 0.25
     );
     ctx.stroke();

@@ -21,6 +21,7 @@ export class NetManager {
       padding,
       this.net.netWidth + extraWidth * 2,
       this.net.rowGap,
+      this.net.columnGap,
       this.rimColor
     );
   }
@@ -31,9 +32,9 @@ export class NetManager {
 
   draw(ctx, ball, touch, isRmPassed) {
     // 농구 림
-    this.rim.drawRimArea(ctx);
     this.rim.draw(ctx);
 
     this.net.drawNet(ctx, ball, touch, isRmPassed);
+    this.rim.collision(ctx, this.net.collisionPoint, ball);
   }
 }

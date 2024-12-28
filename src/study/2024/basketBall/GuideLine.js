@@ -23,7 +23,7 @@ export class GuideLine {
 
     ctx.fillStyle = this.color;
     ctx.beginPath();
-    ctx.arc(target.x, target.y - 13, 10, 0, Math.PI * 2);
+    ctx.arc(target.x, target.y - 13, 8, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
   }

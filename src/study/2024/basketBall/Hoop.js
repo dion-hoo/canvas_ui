@@ -17,9 +17,9 @@ export class Hoop extends Point {
     const dist = Math.sqrt(dx * dx + dy * dy);
 
     if (dist < this.radius + ball.radius) {
-      const damping = Math.random() * 0.007 + 0.028;
+      const damping = Math.random() * 0.003 + 0.028;
 
-      ball.y -= 0.05;
+      // ball.y -= damping;
     }
   }
 }

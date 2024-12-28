@@ -9,6 +9,7 @@ export class Net {
 
     this.rowsArray = [];
     this.nets = [];
+    this.collisionPoint = [];
 
     this.totalRow = 9;
     this.maxRows = 6;
@@ -21,7 +22,7 @@ export class Net {
     }
 
     this.rowGap = 23;
-    this.columnGap = 7;
+    this.columnGap = 6;
     this.netWidth = 0;
 
     this.initNet();
@@ -35,7 +36,12 @@ export class Net {
       const columnGap = h === 0 ? this.columnGap * 7.9 : this.columnGap;
 
       for (let w = 0; w < length; w++) {
-        const rowGap = h === 0 ? this.rowGap * 1.6 : this.rowGap;
+        const rowGap =
+          h === 0
+            ? this.rowGap * 1.6
+            : h === 2
+            ? this.rowGap * 0.83
+            : this.rowGap;
         const width = rowGap * length;
 
         if (h === 0) {
@@ -55,6 +61,8 @@ export class Net {
   }
 
   drawNet(ctx, ball, touch, isPass) {
+    this.collisionPoint = [];
+
     for (let y = 0; y < this.totalRow; y++) {
       const totalRows = this.rowsArray[y];
       const startIndex = this.rowsArray
@@ -100,6 +108,8 @@ export class Net {
           if (!net.hoopDistance.next) {
             net.hoopDistance.next = getDistance(net, nextLineNet).distance;
           }
+
+          this.collisionPoint.push(net);
 
           net.constraints(
             ctx,

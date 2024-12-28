@@ -17,6 +17,7 @@ export class Ball extends Point {
     this.shootForce = 0.6;
 
     // rotate
+    this.isRotate = false;
     this.rotateDirectionLocked = true;
     this.rotateDirection = 1;
     this.angle = 0;
@@ -51,6 +52,10 @@ export class Ball extends Point {
     };
 
     this.radius = this.initialRadius;
+
+    this.isRotate = false;
+    this.angle = 0;
+    this.rotateDirection = 1;
 
     this.isRimPassed = false;
     this.isPassProcessed = false;
@@ -157,9 +162,12 @@ export class Ball extends Point {
         x: innerWidth * 0.5 - this.x,
         y: 0 - this.y,
       };
-
       const cross = vec1.x * vec2.y - vec1.y * vec2.x;
 
+      const angle = Math.atan2(vec1.y, vec1.x);
+      const degress = Math.abs((angle * 180) / Math.PI);
+
+      this.isRotate = degress < 85 || 95 < degress;
       this.rotateDirection = cross > 0 ? -1 : 1;
       this.rotateDirectionLocked = true;
     }
@@ -170,7 +178,9 @@ export class Ball extends Point {
       this.angle += speed * this.rotateDirection;
     }
 
-    ctx.rotate(this.angle);
+    if (this.isRotate) {
+      ctx.rotate(this.angle);
+    }
 
     if (this.isLoaded) {
       const size = this.radius * 2;

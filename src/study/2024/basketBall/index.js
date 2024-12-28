@@ -52,7 +52,7 @@ const createNetManager = () => {
   for (let i = 0; i < length; i++) {
     const x = (innerWidth / (length + 1)) * (i + 1);
     const y = innerHeight * 0.2;
-    const strokeColor = "#888";
+    const strokeColor = "#aaa";
     const rimColor = isRandomColor ? getRandomRgbColor() : "#ea826b";
 
     netManager[i] = new NetManager(x, y, strokeColor, rimColor);
