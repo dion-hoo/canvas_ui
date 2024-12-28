@@ -10,16 +10,4 @@ export class Hoop extends Point {
       inverse: null, // 역 인덱스
     };
   }
-
-  hoopResistance(ball) {
-    const dx = this.x - ball.x;
-    const dy = this.y - ball.y;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-
-    if (dist < this.radius + ball.radius) {
-      const damping = Math.random() * 0.003 + 0.028;
-
-      // ball.y -= damping;
-    }
-  }
 }

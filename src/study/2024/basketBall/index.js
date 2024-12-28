@@ -39,7 +39,7 @@ const createNetManager = () => {
   netManager = [];
 
   // true false
-  const length = 1;
+  const length = 3;
   const isRandomColor = false;
 
   const getRandomRgbColor = () => {

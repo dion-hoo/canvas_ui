@@ -35,6 +35,6 @@ export class NetManager {
     this.rim.draw(ctx);
 
     this.net.drawNet(ctx, ball, touch, isRmPassed);
-    this.rim.collision(ctx, this.net.collisionPoint, ball);
+    this.rim.collision(ctx, ball, this.net.collisionPoint);
   }
 }

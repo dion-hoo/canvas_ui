@@ -10,6 +10,7 @@ export class Net {
     this.rowsArray = [];
     this.nets = [];
     this.collisionPoint = [];
+    this.newGap = 0;
 
     this.totalRow = 9;
     this.maxRows = 6;
@@ -60,6 +61,16 @@ export class Net {
     }
   }
 
+  setNetGap(ball, net) {
+    const { distance } = getDistance(ball, net);
+
+    if (distance < ball.radius + net.radius) {
+      this.newGap = this.rowGap;
+    } else {
+      this.newGap = 0;
+    }
+  }
+
   drawNet(ctx, ball, touch, isPass) {
     this.collisionPoint = [];
 
@@ -89,10 +100,9 @@ export class Net {
             y: dy / distance,
           };
 
-          const force = ball.vx * normal.x + ball.vy * normal.y;
+          const dot = ball.vx * normal.x + ball.vy * normal.y;
 
-          net.move(ball, this.columnGap * 5, force);
-          net.hoopResistance(ball);
+          net.move(ball, this.columnGap * 5, dot);
         }
 
         net.update(1);
@@ -111,10 +121,12 @@ export class Net {
 
           this.collisionPoint.push(net);
 
+          isPass && this.setNetGap(ball, net);
+
           net.constraints(
             ctx,
             nextLineNet,
-            net.hoopDistance.next,
+            net.hoopDistance.next + this.newGap,
             this.strokeColor
           );
         }
@@ -125,10 +137,12 @@ export class Net {
               net.hoopDistance.cloest = getDistance(net, cloestColumn).distance;
             }
 
+            isPass && this.setNetGap(ball, net);
+
             net.constraints(
               ctx,
               cloestColumn,
-              net.hoopDistance.cloest,
+              net.hoopDistance.cloest + this.newGap,
               this.strokeColor
             );
           }
@@ -150,10 +164,12 @@ export class Net {
             net.hoopDistance.inverse = getDistance(net, cloestColumn).distance;
           }
 
+          isPass && this.setNetGap(ball, net);
+
           net.constraints(
             ctx,
             cloestColumn,
-            net.hoopDistance.inverse,
+            net.hoopDistance.inverse + this.newGap,
             this.strokeColor
           );
         }

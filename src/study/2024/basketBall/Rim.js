@@ -14,28 +14,65 @@ export class Rim {
     this.boardWidth = 60;
     this.boardHeight = 30;
 
-    const sideSize = 30;
-    this.addCollsitionPoint = [
-      { x: this.x + sideSize, y: this.y },
-      { x: this.x + this.netWidth - sideSize, y: this.y },
+    const sideSize = 20;
+    this.collsitionTopPoint = [
+      { x: this.x, y: this.y },
+      {
+        x: this.x + sideSize,
+        y: this.y,
+      },
+      {
+        x: this.x + this.netWidth - sideSize,
+        y: this.y,
+      },
+      {
+        x: this.x + this.netWidth,
+        y: this.y,
+      },
     ];
   }
 
-  collision(ctx, collisionPoint, ball) {
-    ctx.strokeStyle = "blue";
-    ctx.lineWidth = 10;
+  collision(ctx, ball, collisionPoint) {
+    for (let i = 0; i < this.collsitionTopPoint.length; i += 2) {
+      const p1 = this.collsitionTopPoint[i];
+      const p2 = this.collsitionTopPoint[i + 1];
 
-    const point = [...this.addCollsitionPoint, ...collisionPoint];
+      if (ball.isRimPassed) {
+        const { x, y } = projection(ball, p1, p2);
 
-    ctx.beginPath();
-    for (let i = 0; i < point.length; i++) {
-      const p1 = point[i];
-      const p2 = point[i + 2];
+        const dx = ball.x - x;
+        const dy = ball.y - y;
+        const dist = Math.hypot(dx, dy);
+        const normal = {
+          x: dx / dist,
+          y: dy / dist,
+        };
+
+        if (dist < ball.radius) {
+          const normalVector = {
+            x: normal.x * ball.radius,
+            y: normal.y * ball.radius,
+          };
+
+          const dot = ball.vx * normal.x + ball.vy * normal.y;
+
+          ball.vx += -2 * dot * normal.x;
+          ball.vy += -2 * dot * normal.y;
+
+          ball.x = x + normalVector.x;
+          ball.y = y + normalVector.y;
+
+          ball.oldX = ball.x - ball.vx;
+          ball.oldY = ball.y - ball.vy;
+        }
+      }
+    }
+
+    for (let i = 0; i < collisionPoint.length; i++) {
+      const p1 = collisionPoint[i];
+      const p2 = collisionPoint[i + 2];
 
       if (!!p2) {
-        ctx.moveTo(p1.x, p1.y);
-        ctx.lineTo(p2.x, p2.y);
-
         if (ball.isRimPassed) {
           const { x, y } = projection(ball, p1, p2);
 
@@ -53,15 +90,6 @@ export class Rim {
               y: normal.y * ball.radius,
             };
 
-            const dot = ball.vx * normal.x + ball.vy * normal.y;
-
-            ball.vx += -2 * dot * normal.x;
-            ball.vy += -2 * dot * normal.y;
-
-            const damping = 0.89;
-            ball.vx *= damping;
-            ball.vy *= damping;
-
             ball.x = x + normalVector.x;
             ball.y = y + normalVector.y;
 
@@ -71,7 +99,6 @@ export class Rim {
         }
       }
     }
-    ctx.stroke();
   }
 
   pedestal(ctx) {
