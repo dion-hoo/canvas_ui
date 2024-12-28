@@ -52,7 +52,7 @@ const createNetManager = () => {
   for (let i = 0; i < length; i++) {
     const x = (innerWidth / (length + 1)) * (i + 1);
     const y = innerHeight * 0.2;
-    const strokeColor = "#999";
+    const strokeColor = "#888";
     const rimColor = isRandomColor ? getRandomRgbColor() : "#ea826b";
 
     netManager[i] = new NetManager(x, y, strokeColor, rimColor);
@@ -88,6 +88,12 @@ const drawNetManager = (touch) => {
   });
 };
 
+const drawRimPedestal = () => {
+  netManager.forEach((net) => {
+    net.drawRimPedestal(ctx);
+  });
+};
+
 const drawBall = (timeStamp, mouse) => {
   if (mouse.isStart) {
     ball.throw(timeStamp, mouse);
@@ -109,9 +115,11 @@ const animate = (timeStamp) => {
   }
 
   if (!ball.isRimPassed) {
+    drawRimPedestal();
     drawNetManager(touch);
     drawBall(timeStamp, mouse);
   } else {
+    drawRimPedestal();
     drawBall(timeStamp, mouse);
     drawNetManager(touch);
   }

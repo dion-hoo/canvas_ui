@@ -11,17 +11,22 @@ export class NetManager {
     this.net = new Net(x, y, strokeColor);
 
     const padding = 6;
-    const rimX = this.net.x - this.net.netWidth / 2 + this.net.rowGap / 2;
+    const extraWidth = 6;
+    const rimX = this.net.x - this.net.netWidth / 2 - extraWidth;
     const rimY = this.net.y;
 
     this.rim = new Rim(
       rimX,
       rimY,
       padding,
-      this.net.netWidth,
+      this.net.netWidth + extraWidth * 2,
       this.net.rowGap,
       this.rimColor
     );
+  }
+
+  drawRimPedestal(ctx) {
+    this.rim.pedestal(ctx);
   }
 
   draw(ctx, ball, touch, isRmPassed) {

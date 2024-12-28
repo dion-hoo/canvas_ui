@@ -39,7 +39,7 @@ export class Net {
         const width = rowGap * length;
 
         if (h === 0) {
-          this.netWidth = rowGap * length;
+          this.netWidth = rowGap * (length - 1);
         }
 
         const x = this.x + rowGap * w - width / 2 + rowGap / 2;
@@ -75,7 +75,15 @@ export class Net {
         const isNoConnect = even && lastItem;
 
         if (isPass) {
-          net.move(ball, this.columnGap * 5, 4);
+          const { distance, dx, dy } = getDistance(ball, net);
+          const normal = {
+            x: dx / distance,
+            y: dy / distance,
+          };
+
+          const force = ball.vx * normal.x + ball.vy * normal.y;
+
+          net.move(ball, this.columnGap * 5, force);
           net.hoopResistance(ball);
         }
 

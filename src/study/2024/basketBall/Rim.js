@@ -8,6 +8,9 @@ export class Rim {
     this.color = color;
     this.size = 10;
 
+    this.boardWidth = 60;
+    this.boardHeight = 30;
+
     this.hitRimArea = [];
 
     this.hitRimArea[0] = {
@@ -34,33 +37,21 @@ export class Rim {
     }
   }
 
-  draw(ctx) {
-    ctx.save();
-
-    ctx.save();
-    ctx.globalAlpha = 0.35;
-
-    const width = 60;
-    const height = 30;
-
-    ctx.fillStyle = this.color;
-    ctx.beginPath();
-    ctx.fillRect(
-      this.x + this.netWidth / 2 - width / 2 - this.netGap / 2,
-      this.y,
-      width,
-      height
-    );
-    ctx.fill();
-
+  pedestal(ctx) {
     // left pedestal
+    ctx.save();
+
+    ctx.shadowColor = "rgba(0, 0, 0, 0.4)";
+    ctx.shadowBlur = 1;
+    ctx.shadowOffsetY = 1;
+
     ctx.beginPath();
     ctx.strokeStyle = this.color;
     ctx.lineWidth = 5;
-    ctx.moveTo(this.x, this.y - 3);
+    ctx.moveTo(this.x, this.y - this.size / 2);
     ctx.lineTo(
-      this.x + this.netWidth / 2 - width / 2,
-      this.y + height - height * 0.2
+      this.x + this.netWidth / 2 - this.netGap,
+      this.y + this.boardHeight - this.boardHeight * 0.25
     );
     ctx.stroke();
 
@@ -68,26 +59,43 @@ export class Rim {
     ctx.beginPath();
     ctx.strokeStyle = this.color;
     ctx.lineWidth = 5;
-    ctx.moveTo(this.x + this.netWidth - this.netGap, this.y - 3);
+    ctx.moveTo(this.x + this.netWidth, this.y - this.size / 2);
     ctx.lineTo(
-      this.x + this.netWidth / 2 + this.netGap / 2,
-      this.y + height - height * 0.2
+      this.x + this.netWidth - this.netWidth / 2 + this.netGap,
+      this.y + this.boardHeight - this.boardHeight * 0.25
     );
     ctx.stroke();
-
     ctx.restore();
+  }
+
+  draw(ctx) {
+    ctx.save();
+
+    ctx.globalAlpha = 0.35;
 
     ctx.fillStyle = this.color;
     ctx.beginPath();
-    ctx.fillRect(this.x, this.y, this.netWidth - this.netGap, -this.size);
+    ctx.fillRect(
+      this.x + this.netWidth / 2 - this.boardWidth / 2,
+      this.y,
+      this.boardWidth,
+      this.boardHeight
+    );
+    ctx.fill();
+    ctx.restore();
+
+    ctx.save();
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+    ctx.fillRect(this.x, this.y, this.netWidth, -this.size);
     ctx.fill();
 
     ctx.strokeStyle = "rgba(0, 0, 0, 0.5)";
+    ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(this.x, this.y - this.padding);
-    ctx.lineTo(this.x + this.netWidth - this.netGap, this.y - this.padding);
+    ctx.moveTo(this.x, this.y - this.padding / 1.3);
+    ctx.lineTo(this.x + this.netWidth, this.y - this.padding / 1.3);
     ctx.stroke();
-
     ctx.restore();
   }
 }

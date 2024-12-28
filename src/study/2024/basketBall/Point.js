@@ -90,11 +90,14 @@ export class Point {
     }
 
     if (isDraw) {
+      ctx.save();
       ctx.strokeStyle = strokeColor;
+      ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.moveTo(this.x, this.y);
       ctx.lineTo(target.x, target.y);
       ctx.stroke();
+      ctx.restore();
     }
   }
 
