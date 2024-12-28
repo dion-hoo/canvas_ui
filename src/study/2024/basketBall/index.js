@@ -35,11 +35,13 @@ const createBall = () => {
   ball = new Ball(x, y, radius);
 };
 
+const isMove = false;
+
 const createNetManager = () => {
   netManager = [];
 
   // true false
-  const length = 3;
+  const length = 1;
   const isRandomColor = false;
 
   const getRandomRgbColor = () => {
@@ -84,6 +86,9 @@ const initialize = () => {
 
 const drawNetManager = (touch) => {
   netManager.forEach((net) => {
+    if (isMove) {
+      net.moveMoment(0.01);
+    }
     net.draw(ctx, ball, touch, ball.isRimPassed);
   });
 };

@@ -24,10 +24,29 @@ export class NetManager {
       this.net.columnGap,
       this.rimColor
     );
+
+    this.initAngle = Math.random() * 360;
+    this.angle = 0;
   }
 
   drawRimPedestal(ctx) {
     this.rim.pedestal(ctx);
+  }
+
+  moveMoment(angleValue) {
+    this.angle += angleValue;
+
+    this.rim.x += Math.sin(this.initAngle + this.angle);
+
+    this.rim.collsitionTopPoint.forEach((point) => {
+      point.x += Math.sin(this.initAngle + this.angle);
+    });
+
+    this.net.nets.forEach((net, index) => {
+      if (index < 6) {
+        net.x += Math.sin(this.initAngle + this.angle);
+      }
+    });
   }
 
   draw(ctx, ball, touch, isRmPassed) {
@@ -35,6 +54,6 @@ export class NetManager {
     this.rim.draw(ctx);
 
     this.net.drawNet(ctx, ball, touch, isRmPassed);
-    this.rim.collision(ctx, ball, this.net.collisionPoint);
+    this.rim.collision(ball, this.net.collisionPoint);
   }
 }

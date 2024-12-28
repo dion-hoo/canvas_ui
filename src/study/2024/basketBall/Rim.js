@@ -32,7 +32,7 @@ export class Rim {
     ];
   }
 
-  collision(ctx, ball, collisionPoint) {
+  collision(ball, collisionPoint) {
     for (let i = 0; i < this.collsitionTopPoint.length; i += 2) {
       const p1 = this.collsitionTopPoint[i];
       const p2 = this.collsitionTopPoint[i + 1];
@@ -58,6 +58,9 @@ export class Rim {
 
           ball.vx += -2 * dot * normal.x;
           ball.vy += -2 * dot * normal.y;
+
+          ball.vx *= 0.89;
+          ball.vy *= 0.89;
 
           ball.x = x + normalVector.x;
           ball.y = y + normalVector.y;
