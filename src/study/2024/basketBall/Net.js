@@ -109,10 +109,6 @@ export class Net {
         net.move(touch, this.columnGap, 20);
         net.windowRebound();
 
-        if (y !== 0) {
-          net.draw(ctx);
-        }
-
         const nextLineNet = this.nets[index + 11];
         if ((index % 11 === 0 || index % 11 === 5) && !!nextLineNet) {
           if (!net.hoopDistance.next) {

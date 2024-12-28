@@ -12,7 +12,7 @@ let guideLine = null;
 let eventHandlers = null;
 
 const resize = () => {
-  const ratio = 1; //devicePixelRatio;
+  const ratio = devicePixelRatio;
 
   canvas.width = innerWidth * ratio;
   canvas.height = innerHeight * ratio;

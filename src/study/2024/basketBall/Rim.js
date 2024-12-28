@@ -108,7 +108,7 @@ export class Rim {
     // left pedestal
     ctx.save();
 
-    ctx.shadowColor = "rgba(0, 0, 0, 0.4)";
+    ctx.shadowColor = "rgba(0, 0, 0, 0.6)";
     ctx.shadowBlur = 1;
     ctx.shadowOffsetY = 1;
 
@@ -157,7 +157,7 @@ export class Rim {
     ctx.fillRect(this.x, this.y, this.netWidth, -this.size);
     ctx.fill();
 
-    ctx.strokeStyle = "rgba(0, 0, 0, 0.5)";
+    ctx.strokeStyle = "rgba(0, 0, 0, 0.3)";
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(this.x, this.y - this.padding / 1.3);
