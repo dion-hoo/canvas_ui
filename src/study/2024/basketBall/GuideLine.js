@@ -6,8 +6,10 @@ export class GuideLine {
   }
 
   draw(ctx, target) {
+    const dashedValue = innerHeight * 0.0036;
+
     ctx.save();
-    ctx.setLineDash([5, 5]);
+    ctx.setLineDash([dashedValue, dashedValue]);
     ctx.strokeStyle = this.color;
     ctx.lineWidth = 1;
     ctx.beginPath();
@@ -21,9 +23,12 @@ export class GuideLine {
 
     ctx.globalAlpha = 0.8;
 
+    const radius = innerHeight * 0.0045;
+    const padding = innerHeight * 0.0093;
+
     ctx.fillStyle = this.color;
     ctx.beginPath();
-    ctx.arc(target.x, target.y - 13, 8, 0, Math.PI * 2);
+    ctx.arc(target.x, target.y - padding, radius, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
   }

@@ -10,8 +10,8 @@ export class NetManager {
 
     this.net = new Net(x, y, strokeColor);
 
-    const padding = 6;
-    const extraWidth = 6;
+    const padding = innerHeight * 0.0043;
+    const extraWidth = innerHeight * 0.0043;
     const rimX = this.net.x - this.net.netWidth / 2 - extraWidth;
     const rimY = this.net.y;
 
@@ -54,6 +54,6 @@ export class NetManager {
     this.rim.draw(ctx);
 
     this.net.drawNet(ctx, ball, touch, isRmPassed);
-    this.rim.collision(ball, this.net.collisionPoint);
+    this.rim.collision(ball, this.net.collisionPoint, this.net.scoredPoint);
   }
 }

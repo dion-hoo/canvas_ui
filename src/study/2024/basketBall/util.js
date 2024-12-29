@@ -22,6 +22,26 @@ export const getDistance2 = (x1, y1, x2, y2) => {
   };
 };
 
+export const raycasting = (target, point) => {
+  let isInside = false;
+  for (let i = 0, j = point.length - 1; i < point.length; j = i++) {
+    const r1 = point[i];
+    const r2 = point[j];
+
+    const x =
+      target.x < r1.x + ((target.y - r1.y) / (r2.y - r1.y)) * (r2.x - r1.x);
+    const y = target.y < r1.y !== target.y < r2.y;
+
+    const intersect = x && y;
+
+    if (intersect) {
+      isInside = !isInside;
+    }
+  }
+
+  return isInside;
+};
+
 export const projection = (p, d1, d2) => {
   const v1 = {
     x: p.x - d1.x,

@@ -92,7 +92,7 @@ export class Point {
     if (isDraw) {
       ctx.save();
       ctx.strokeStyle = strokeColor;
-      ctx.lineWidth = 1;
+      ctx.lineWidth = innerHeight * 0.0007;
       ctx.beginPath();
       ctx.moveTo(this.x, this.y);
       ctx.lineTo(target.x, target.y);

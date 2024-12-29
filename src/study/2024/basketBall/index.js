@@ -2,17 +2,20 @@ import { NetManager } from "./NetManager.js";
 import { Ball } from "./Ball.js";
 import { GuideLine } from "./GuideLine.js";
 import { EventHandlers } from "./EventHandlers.js";
+import { Chalk } from "./Chalk.js";
 
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
+const socre = document.querySelector(".score");
 
 let ball = null;
 let netManager = [];
 let guideLine = null;
 let eventHandlers = null;
+let chalk = null;
 
 const resize = () => {
-  const ratio = devicePixelRatio;
+  const ratio = 1; //devicePixelRatio;
 
   canvas.width = innerWidth * ratio;
   canvas.height = innerHeight * ratio;
@@ -25,23 +28,33 @@ const resize = () => {
   initialize();
 };
 
+const createChalk = () => {
+  chalk = null;
+
+  const x = innerWidth * 0.5;
+  const y = innerHeight;
+
+  chalk = new Chalk(x, y);
+};
+
 const createBall = () => {
   ball = null;
 
-  const radius = 90;
+  const radius = innerHeight * 0.0639;
   const x = innerWidth * 0.5;
   const y = innerHeight - radius;
 
   ball = new Ball(x, y, radius);
 };
 
-const isMove = false;
+// true false
+const isMove = true;
 
 const createNetManager = () => {
   netManager = [];
 
   // true false
-  const length = 1;
+  const length = 3;
   const isRandomColor = false;
 
   const getRandomRgbColor = () => {
@@ -54,7 +67,7 @@ const createNetManager = () => {
   for (let i = 0; i < length; i++) {
     const x = (innerWidth / (length + 1)) * (i + 1);
     const y = innerHeight * 0.2;
-    const strokeColor = "#aaa";
+    const strokeColor = "#454545";
     const rimColor = isRandomColor ? getRandomRgbColor() : "#ea826b";
 
     netManager[i] = new NetManager(x, y, strokeColor, rimColor);
@@ -64,7 +77,7 @@ const createNetManager = () => {
 const createGuideLine = () => {
   guideLine = null;
 
-  const padding = 20;
+  const padding = innerHeight * 0.0143;
   const x = innerWidth * 0.5;
   const y = innerHeight - ball.radius * 2 - padding;
   const color = "#333";
@@ -78,10 +91,15 @@ const createEventHandlers = () => {
 };
 
 const initialize = () => {
+  createChalk();
   createBall();
   createNetManager();
   createGuideLine();
   createEventHandlers();
+};
+
+const drawChalk = () => {
+  chalk.draw(ctx);
 };
 
 const drawNetManager = (touch) => {
@@ -104,6 +122,8 @@ const drawBall = (timeStamp, mouse) => {
     ball.throw(timeStamp, mouse);
   }
 
+  socre.innerHTML = ball.score;
+
   ball.updatePassedBall();
   ball.windowRebound();
   ball.draw(ctx, mouse);
@@ -118,6 +138,8 @@ const animate = (timeStamp) => {
   if (mouse.isDown) {
     guideLine.draw(ctx, mouse);
   }
+
+  drawChalk(ctx);
 
   if (!ball.isRimPassed) {
     drawRimPedestal();

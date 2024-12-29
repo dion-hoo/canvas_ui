@@ -15,36 +15,181 @@
         overflow: hidden;
       }
 
+      @font-face {
+        font-family: hind;
+        font-weight: 700;
+        src: url("../../../assets/font/Hind-Bold.ttf") format("truetype");
+      }
+
+      @font-face {
+        font-family: blackHanSans;
+        font-weight: 700;
+        src: url("../../../assets/font/BlackHanSans-Regular.ttf")
+          format("truetype");
+      }
+
+      html,
+      body {
+        overflow: hidden;
+      }
+
       canvas {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: #fff;
-        /* background: linear-gradient(
+        background: linear-gradient(
           to bottom,
-          rgba(120, 35, 2, 1),
-          rgba(131, 39, 2, 1),
-          rgba(112, 31, 4, 1),
-          rgba(113, 32, 2, 1),
-          rgba(116, 31, 2, 1)
-        ); */
+          transparent 60%,
+          #ebc8b8,
+          #c9835a 100%
+        );
+      }
 
-        &.active {
-          animation: background 1s linear forwards;
+      .round {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1;
+        pointer-events: none;
+
+        .inner {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100vw;
+          padding: 2.5% 0;
+          background-color: rgba(0, 0, 0, 0.2);
+          opacity: 0;
+          transform: translateX(-100%);
+          animation: slideIn 0.3s 4s linear forwards,
+            fadeOut 0.1s 5s linear forwards;
+          p {
+            text-align: center;
+            font-family: blackHanSans;
+            font-size: 10vh;
+          }
         }
       }
 
-      @keyframes background {
+      .score-board {
+        position: absolute;
+        top: 70px;
+        left: 50%;
+        transform: translate(-50%, 0);
+        z-index: 1;
+
+        p {
+          font-size: 5vh;
+          text-align: center;
+          font-family: blackHanSans;
+        }
+      }
+
+      .cover {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #000;
+        z-index: 3;
+        pointer-events: none;
+        animation: fadeOut 0.3s 3s linear forwards;
+
+        .inn {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          background: #000 url("./slam-dunk.jpg") no-repeat 0 0 / cover;
+          background-clip: text;
+          color: transparent;
+          transform: translate(-50%, -50%);
+        }
+
+        .tit {
+          font-size: 13vh;
+          margin-bottom: 10px;
+          animation: scaleDown2 1s 1s cubic-bezier(1, 0.02, 1, 1) forwards;
+        }
+
+        p {
+          color: #fff;
+          font-family: blackHanSans;
+          text-transform: uppercase;
+          color: transparent;
+          text-align: center;
+        }
+
+        .text {
+          font-size: 27vh;
+          line-height: 0.8;
+          animation: scaleDown 1s 1s cubic-bezier(1, 0.02, 1, 1) forwards;
+        }
+      }
+
+      @keyframes slideIn {
         to {
-          background: #323232;
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes fadeOut {
+        to {
+          opacity: 0;
+        }
+      }
+
+      @keyframes scaleDown2 {
+        to {
+          font-size: 8vh;
+        }
+      }
+
+      @keyframes scaleDown {
+        to {
+          font-size: 15vh;
+        }
+      }
+
+      @keyframes fadeIn {
+        to {
+          opacity: 0.08;
+        }
+      }
+
+      @keyframes scaleUp {
+        to {
+          transform: translate(-50%, -50%) scale(5);
         }
       }
     </style>
   </head>
   <body>
+    <!-- <div class="round">
+      <div class="inner">
+        <p>Round 1</p>
+      </div>
+    </div>
+
+    <div class="cover">
+      <div class="inn">
+        <p class="tit">The First</p>
+        <p class="text">Basket</p>
+        <p class="text">ball</p>
+        <p class="text">Game</p>
+      </div>
+    </div> -->
+
+    <div class="score-board">
+      <p class="score">0</p>
+    </div>
+
     <canvas> </canvas>
+
     <script type="module" src="./index.js"></script>
   </body>
 </html>

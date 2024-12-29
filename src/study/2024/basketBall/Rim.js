@@ -9,12 +9,12 @@ export class Rim {
     this.rowGap = rowGap;
     this.columnGap = columnGap;
     this.color = color;
-    this.size = 10;
+    this.size = innerHeight * 0.0071;
 
-    this.boardWidth = 60;
-    this.boardHeight = 30;
+    this.boardWidth = innerHeight * 0.0426;
+    this.boardHeight = innerHeight * 0.0213;
 
-    const sideSize = 20;
+    const sideSize = innerHeight * 0.0142;
     this.collsitionTopPoint = [
       { x: this.x, y: this.y },
       {
@@ -32,7 +32,21 @@ export class Rim {
     ];
   }
 
-  collision(ball, collisionPoint) {
+  collision(ball, collisionPoint, scoredPoint) {
+    const p1 = scoredPoint[0];
+    const p2 = scoredPoint[1];
+
+    const { x, y } = projection(ball, p1, p2);
+
+    const dx = x - ball.x;
+    const dy = y - ball.y;
+    const dist = Math.hypot(dx, dy);
+
+    if (dist <= ball.radius && ball.isRimPassed && !ball.isScored) {
+      ball.score += 1;
+      ball.isScored = true;
+    }
+
     for (let i = 0; i < this.collsitionTopPoint.length; i += 2) {
       const p1 = this.collsitionTopPoint[i];
       const p2 = this.collsitionTopPoint[i + 1];
@@ -109,12 +123,12 @@ export class Rim {
     ctx.save();
 
     ctx.shadowColor = "rgba(0, 0, 0, 0.6)";
-    ctx.shadowBlur = 1;
-    ctx.shadowOffsetY = 1;
+    ctx.shadowBlur = innerHeight * 0.0007;
+    ctx.shadowOffsetY = innerHeight * 0.0007;
 
     ctx.beginPath();
     ctx.strokeStyle = this.color;
-    ctx.lineWidth = 5;
+    ctx.lineWidth = innerHeight * 0.0036;
     ctx.moveTo(this.x, this.y - this.size / 2);
     ctx.lineTo(
       this.x + this.netWidth / 2 - this.rowGap,
@@ -125,7 +139,7 @@ export class Rim {
     // right pedestal
     ctx.beginPath();
     ctx.strokeStyle = this.color;
-    ctx.lineWidth = 5;
+    ctx.lineWidth = innerHeight * 0.0036;
     ctx.moveTo(this.x + this.netWidth, this.y - this.size / 2);
     ctx.lineTo(
       this.x + this.netWidth - this.netWidth / 2 + this.rowGap,
@@ -138,7 +152,7 @@ export class Rim {
   draw(ctx) {
     ctx.save();
 
-    ctx.globalAlpha = 0.35;
+    ctx.globalAlpha = 0.6;
 
     ctx.fillStyle = this.color;
     ctx.beginPath();

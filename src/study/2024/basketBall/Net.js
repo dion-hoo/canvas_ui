@@ -10,6 +10,7 @@ export class Net {
     this.rowsArray = [];
     this.nets = [];
     this.collisionPoint = [];
+    this.scoredPoint = [];
     this.newGap = 0;
 
     this.totalRow = 9;
@@ -22,8 +23,8 @@ export class Net {
         : this.rowsArray.push(this.minRows);
     }
 
-    this.rowGap = 23;
-    this.columnGap = 6;
+    this.rowGap = innerHeight * 0.0164;
+    this.columnGap = innerHeight * 0.0043;
     this.netWidth = 0;
 
     this.initNet();
@@ -171,5 +172,12 @@ export class Net {
         }
       }
     }
+
+    const totalNetLength = this.nets.length - 1;
+
+    const net1 = this.nets[totalNetLength - this.minRows];
+    const net2 = this.nets[totalNetLength];
+
+    this.scoredPoint = [net1, net2];
   }
 }

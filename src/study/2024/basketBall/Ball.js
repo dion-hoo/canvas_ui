@@ -16,6 +16,9 @@ export class Ball extends Point {
     this.dy = 0;
     this.shootForce = 0.6;
 
+    this.score = 0;
+    this.isScored = false;
+
     // rotate
     this.isRotate = false;
     this.rotateDirectionLocked = true;
@@ -37,8 +40,8 @@ export class Ball extends Point {
   }
 
   reset() {
-    this.x = innerWidth * 0.5 - 30 / 2;
-    this.y = innerHeight - 90;
+    this.x = innerWidth * 0.5;
+    this.y = innerHeight - this.initialRadius;
 
     this.oldX = this.x;
     this.oldY = this.y;
@@ -64,6 +67,8 @@ export class Ball extends Point {
     this.isEnd = false;
 
     this.floorCount = 0;
+
+    this.isScored = false;
 
     this.dx = 0;
     this.dy = 0;
