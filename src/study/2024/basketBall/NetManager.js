@@ -33,17 +33,29 @@ export class NetManager {
     this.rim.pedestal(ctx);
   }
 
-  moveMoment(angleValue) {
+  moveMoment(angleValue, isRoundMove) {
     this.angle += angleValue;
+
+    if (isRoundMove) {
+      this.rim.y += Math.cos(this.initAngle + this.angle);
+    }
 
     this.rim.x += Math.sin(this.initAngle + this.angle);
 
     this.rim.collsitionTopPoint.forEach((point) => {
+      if (isRoundMove) {
+        point.y += Math.cos(this.initAngle + this.angle);
+      }
+
       point.x += Math.sin(this.initAngle + this.angle);
     });
 
     this.net.nets.forEach((net, index) => {
       if (index < 6) {
+        if (isRoundMove) {
+          net.y += Math.cos(this.initAngle + this.angle);
+        }
+
         net.x += Math.sin(this.initAngle + this.angle);
       }
     });

@@ -8,10 +8,12 @@ export class Chalk {
     this.space = 30;
     this.perspective = 250;
     this.ratio = this.perspective / this.width;
+
+    this.color = 0;
   }
 
   leftSide(ctx) {
-    ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+    ctx.fillStyle = this.color;
     ctx.beginPath();
     ctx.moveTo(this.x - this.width, this.y);
     ctx.lineTo(this.x - this.width + this.perspective, this.y - this.height);
@@ -27,7 +29,7 @@ export class Chalk {
   }
 
   rightSide(ctx) {
-    ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+    ctx.fillStyle = this.color;
     ctx.beginPath();
     ctx.moveTo(this.x + this.width, this.y);
     ctx.lineTo(this.x + this.width - this.perspective, this.y - this.height);
@@ -46,16 +48,33 @@ export class Chalk {
   center(ctx) {
     ctx.beginPath();
     ctx.lineWidth = 1;
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
+    ctx.strokeStyle = this.color;
     ctx.moveTo(this.x - this.width + this.perspective, this.y - this.height);
     ctx.lineTo(this.x + this.width - this.perspective, this.y - this.height);
 
     ctx.stroke();
   }
 
-  draw(ctx) {
+  draw(ctx, score, color) {
+    ctx.save();
+    if (score !== 0) {
+      ctx.shadowBlur = 20;
+      ctx.shadowColor = color;
+    }
+
     this.leftSide(ctx);
     this.rightSide(ctx);
     this.center(ctx);
+
+    this.color = color;
+
+    ctx.strokeStyle = this.color;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, this.y - this.height);
+    ctx.lineTo(innerWidth, this.y - this.height - 1);
+    ctx.stroke();
+
+    ctx.restore();
   }
 }
