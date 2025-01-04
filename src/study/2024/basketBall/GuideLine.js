@@ -11,7 +11,7 @@ export class GuideLine {
     ctx.save();
     ctx.setLineDash([dashedValue, dashedValue]);
     ctx.strokeStyle = this.color;
-    ctx.lineWidth = 1;
+    ctx.lineWidth = innerHeight * 0.0007;
     ctx.beginPath();
     ctx.moveTo(this.x, this.y);
     ctx.lineTo(target.x, target.y);
@@ -21,14 +21,20 @@ export class GuideLine {
 
     ctx.save();
 
-    ctx.globalAlpha = 0.8;
+    ctx.globalAlpha = 0.5;
 
     const radius = innerHeight * 0.0045;
-    const padding = innerHeight * 0.0093;
+
+    const dx = target.x - this.x;
+    const dy = target.y - this.y;
+    const radian = Math.atan2(dy, dx);
+
+    const x = target.x + Math.cos(radian) * 10;
+    const y = target.y + Math.sin(radian) * 10;
 
     ctx.fillStyle = this.color;
     ctx.beginPath();
-    ctx.arc(target.x, target.y - padding, radius, 0, Math.PI * 2);
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
   }

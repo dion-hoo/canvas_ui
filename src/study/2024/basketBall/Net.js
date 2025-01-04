@@ -66,13 +66,24 @@ export class Net {
     const { distance } = getDistance(ball, net);
 
     if (distance < ball.radius + net.radius) {
-      this.newGap = this.rowGap;
+      //   this.newGap = ball.radius;
     } else {
       this.newGap = 0;
     }
   }
 
-  drawNet(ctx, ball, touch, isPass) {
+  drawLine(ctx, p1, p2) {
+    ctx.save();
+    ctx.strokeStyle = this.strokeColor;
+    ctx.lineWidth = innerHeight * 0.0007;
+    ctx.beginPath();
+    ctx.moveTo(p1.x, p1.y);
+    ctx.lineTo(p2.x, p2.y);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  drawNet(ctx, touch) {
     this.collisionPoint = [];
 
     for (let y = 0; y < this.totalRow; y++) {
@@ -94,54 +105,32 @@ export class Net {
         const lastItem = x === totalRows - 1;
         const isNoConnect = even && lastItem;
 
-        if (isPass) {
-          const { distance, dx, dy } = getDistance(ball, net);
-          const normal = {
-            x: dx / distance,
-            y: dy / distance,
-          };
-
-          const dot = ball.vx * normal.x + ball.vy * normal.y;
-
-          net.move(ball, this.columnGap * 5, dot);
-        }
-
         net.update(1);
         net.move(touch, this.columnGap, 20);
         net.windowRebound();
 
         const nextLineNet = this.nets[index + 11];
         if ((index % 11 === 0 || index % 11 === 5) && !!nextLineNet) {
+          this.drawLine(ctx, net, nextLineNet);
+
+          this.collisionPoint.push(net);
+
           if (!net.hoopDistance.next) {
             net.hoopDistance.next = getDistance(net, nextLineNet).distance;
           }
 
-          this.collisionPoint.push(net);
-
-          isPass && this.setNetGap(ball, net);
-
-          net.constraints(
-            ctx,
-            nextLineNet,
-            net.hoopDistance.next + this.newGap,
-            this.strokeColor
-          );
+          net.constraints(nextLineNet, net.hoopDistance.next);
         }
 
         if (isSameRow && !isNoConnect) {
           if (cloestColumn) {
+            this.drawLine(ctx, net, cloestColumn);
+
             if (!net.hoopDistance.cloest) {
               net.hoopDistance.cloest = getDistance(net, cloestColumn).distance;
             }
 
-            isPass && this.setNetGap(ball, net);
-
-            net.constraints(
-              ctx,
-              cloestColumn,
-              net.hoopDistance.cloest + this.newGap,
-              this.strokeColor
-            );
+            net.constraints(cloestColumn, net.hoopDistance.cloest);
           }
         }
       }
@@ -157,18 +146,13 @@ export class Net {
         if (!net) continue;
 
         if (cloestColumn && !isNoConnect) {
+          this.drawLine(ctx, net, cloestColumn);
+
           if (!net.hoopDistance.inverse) {
             net.hoopDistance.inverse = getDistance(net, cloestColumn).distance;
           }
 
-          isPass && this.setNetGap(ball, net);
-
-          net.constraints(
-            ctx,
-            cloestColumn,
-            net.hoopDistance.inverse + this.newGap,
-            this.strokeColor
-          );
+          net.constraints(cloestColumn, net.hoopDistance.inverse);
         }
       }
     }
@@ -179,5 +163,72 @@ export class Net {
     const net2 = this.nets[totalNetLength];
 
     this.scoredPoint = [net1, net2];
+  }
+
+  releaseNet(ball) {
+    for (let y = 0; y < this.totalRow; y++) {
+      const totalRows = this.rowsArray[y];
+      const startIndex = this.rowsArray
+        .slice(0, y)
+        .reduce((sum, val) => sum + val, 0);
+      const endIndex = startIndex + totalRows - 1;
+      const length = totalRows + startIndex;
+
+      for (let x = 0; x < totalRows; x++) {
+        const index = startIndex + x;
+
+        const net = this.nets[index];
+        const isSameRow = index < length;
+        const cloestColumn = this.nets[index + this.maxRows];
+
+        const even = y % 2 === 0;
+        const lastItem = x === totalRows - 1;
+        const isNoConnect = even && lastItem;
+
+        if (ball.isRimPassed) {
+          const { distance, dx, dy } = getDistance(ball, net);
+          const normal = {
+            x: dx / distance,
+            y: dy / distance,
+          };
+
+          const dot = ball.vx * normal.x + ball.vy * normal.y;
+
+          net.move(ball, this.columnGap * 5, dot);
+        }
+
+        const nextLineNet = this.nets[index + 11];
+        if ((index % 11 === 0 || index % 11 === 5) && !!nextLineNet) {
+          ball.isRimPassed && this.setNetGap(ball, net);
+
+          net.gap = this.newGap;
+        }
+
+        if (isSameRow && !isNoConnect) {
+          if (cloestColumn) {
+            ball.isRimPassed && this.setNetGap(ball, net);
+
+            net.gap = this.newGap;
+          }
+        }
+      }
+
+      // 역순으로 순회
+      for (let invX = endIndex; invX >= startIndex; invX--) {
+        const net = this.nets[invX];
+        const even = y % 2 === 0;
+        const lastItem = invX === startIndex;
+        const isNoConnect = even && lastItem;
+        const cloestColumn = this.nets[invX + this.minRows];
+
+        if (!net) continue;
+
+        if (cloestColumn && !isNoConnect) {
+          ball.isRimPassed && ball.isStart && this.setNetGap(ball, net);
+
+          net.gap = this.newGap;
+        }
+      }
+    }
   }
 }

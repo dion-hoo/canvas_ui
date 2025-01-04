@@ -166,6 +166,10 @@ export class Rim {
     ctx.restore();
 
     ctx.save();
+
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = this.color;
+
     ctx.fillStyle = this.color;
     ctx.beginPath();
     ctx.fillRect(this.x, this.y, this.netWidth, -this.size);

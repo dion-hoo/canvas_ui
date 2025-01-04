@@ -1,17 +1,18 @@
 export class EventHandlers {
-  constructor(ball, guideLine) {
+  constructor(ball, createBall, guideLine) {
     this.mouse = {
       isDown: false,
       isStart: false,
-      x: 0,
-      y: 0,
+      x: null,
+      y: null,
     };
     this.touch = {
-      x: 0,
-      y: 0,
+      x: null,
+      y: null,
     };
 
     this.ball = ball;
+    this.createBall = createBall;
     this.guideLine = guideLine;
   }
 
@@ -31,38 +32,34 @@ export class EventHandlers {
     this.mouse.y = isFar ? y : event.clientY;
   };
 
-  onClick(target) {
-    //  target.classList.add("active");
-  }
-
   onMove(event) {
     if (!this.mouse.isStart) {
       this.mouse.isDown = true;
-
-      this.setMousePoint(event);
     }
+
+    this.setMousePoint(event);
 
     this.touch.x = event.clientX;
     this.touch.y = event.clientY;
   }
 
-  onUp(event) {
+  onUp() {
     this.mouse.isStart = true;
     this.mouse.isDown = false;
 
-    this.setMousePoint(event);
+    if (this.ball.length) {
+      this.ball[this.ball.length - 1].isStart = true;
+    }
 
-    this.ball.rotateDirectionLocked = false;
+    this.createBall();
   }
 
   registerEvents() {
-    window.addEventListener("click", this.onClick.bind(this));
     window.addEventListener("pointermove", this.onMove.bind(this));
     window.addEventListener("pointerup", this.onUp.bind(this));
   }
 
   unregisterEvents() {
-    window.removeEventListener("click", this.onClick.bind(this));
     window.removeEventListener("pointermove", this.onMove.bind(this));
     window.removeEventListener("pointerup", this.onUp.bind(this));
   }

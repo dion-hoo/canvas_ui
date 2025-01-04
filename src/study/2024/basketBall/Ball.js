@@ -10,68 +10,21 @@ export class Ball extends Point {
     this.isPassProcessed = false;
     this.isOnceDistance = false;
     this.isShooting = false;
-    this.isEnd = false;
 
     this.dx = 0;
     this.dy = 0;
     this.shootForce = 0.6;
 
     this.score = 0;
+    this.isStart = false;
     this.isScored = false;
 
-    // rotate
-    this.isRotate = false;
-    this.rotateDirectionLocked = true;
-    this.rotateDirection = 1;
-    this.angle = 0;
+    this.shadowBlur = innerHeight * 0.01;
 
     // time
     this.resetFps = 4;
     this.resetFpsTime = 1000 / this.resetFps;
     this.resetTime = 0;
-
-    // image
-    this.image = new Image();
-    this.image.src = "./ball.png";
-    this.image.onload = () => {
-      this.isLoaded = true;
-    };
-    this.isLoaded = false;
-  }
-
-  reset() {
-    this.x = innerWidth * 0.5;
-    this.y = innerHeight - this.initialRadius;
-
-    this.oldX = this.x;
-    this.oldY = this.y;
-
-    this.vx = 0;
-    this.vy = 0;
-
-    this.gravity = {
-      x: 0,
-      y: 0,
-    };
-
-    this.radius = this.initialRadius;
-
-    this.isRotate = false;
-    this.angle = 0;
-    this.rotateDirection = 1;
-
-    this.isRimPassed = false;
-    this.isPassProcessed = false;
-    this.isOnceDistance = false;
-    this.isShooting = false;
-    this.isEnd = false;
-
-    this.floorCount = 0;
-
-    this.isScored = false;
-
-    this.dx = 0;
-    this.dy = 0;
   }
 
   shouldResetTime = (timeStamp) => {
@@ -109,7 +62,7 @@ export class Ball extends Point {
         mouse.isStart = false;
         mouse.isDown = false;
 
-        this.reset();
+        this.isEnd = true;
 
         this.resetTime = null;
       }
@@ -154,43 +107,17 @@ export class Ball extends Point {
     }
   }
 
-  draw(ctx, target) {
+  draw(ctx) {
     ctx.save();
     ctx.translate(this.x, this.y);
 
-    if (!this.rotateDirectionLocked) {
-      const vec1 = {
-        x: target.x - this.x,
-        y: target.y - this.y,
-      };
-      const vec2 = {
-        x: innerWidth * 0.5 - this.x,
-        y: 0 - this.y,
-      };
-      const cross = vec1.x * vec2.y - vec1.y * vec2.x;
+    ctx.shadowBlur = this.shadowBlur;
+    ctx.shadowColor = "#fff";
 
-      const angle = Math.atan2(vec1.y, vec1.x);
-      const degress = Math.abs((angle * 180) / Math.PI);
-
-      this.isRotate = degress < 85 || 95 < degress;
-      this.rotateDirection = cross > 0 ? -1 : 1;
-      this.rotateDirectionLocked = true;
-    }
-
-    const speed = Math.hypot(this.vx, this.vy) * 0.01;
-
-    if (!this.isEnd) {
-      this.angle += speed * this.rotateDirection;
-    }
-
-    if (this.isRotate) {
-      ctx.rotate(this.angle);
-    }
-
-    if (this.isLoaded) {
-      const size = this.radius * 2;
-      ctx.drawImage(this.image, -size / 2, -size / 2, size, size);
-    }
+    ctx.fillStyle = "#fff";
+    ctx.beginPath();
+    ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+    ctx.fill();
 
     ctx.restore();
   }

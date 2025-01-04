@@ -61,11 +61,15 @@ export class NetManager {
     });
   }
 
-  draw(ctx, ball, touch, isRmPassed) {
-    // 농구 림
+  draw(ctx, ball, touch) {
     this.rim.draw(ctx);
+    this.net.drawNet(ctx, touch);
 
-    this.net.drawNet(ctx, ball, touch, isRmPassed);
-    this.rim.collision(ball, this.net.collisionPoint, this.net.scoredPoint);
+    ball.forEach((b) => {
+      if (b.isStart) {
+        this.net.releaseNet(b);
+        this.rim.collision(b, this.net.collisionPoint, this.net.scoredPoint);
+      }
+    });
   }
 }

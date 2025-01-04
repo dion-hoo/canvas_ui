@@ -2,21 +2,27 @@ import { NetManager } from "./NetManager.js";
 import { Ball } from "./Ball.js";
 import { GuideLine } from "./GuideLine.js";
 import { EventHandlers } from "./EventHandlers.js";
-import { Chalk } from "./Chalk.js";
-import { Text } from "./Text.js";
+import { Line } from "./Line.js";
+import { Beat } from "./Beat.js";
+import { Taregt } from "./Target.js";
 
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 const socre = document.querySelector(".score");
-const round = document.querySelector(".round");
 
-let ball = null;
+let ball = [];
 let netManager = [];
 let guideLine = null;
 let eventHandlers = null;
-let chalk = null;
-let text1 = null;
-let text2 = null;
+let line = null;
+let beat = [];
+
+let fps = 1.4;
+let fpsTime = 1000 / fps;
+let currentTime = 0;
+let target = null;
+
+const beatColor = "#19c";
 
 const resize = () => {
   const ratio = 1; //devicePixelRatio;
@@ -29,38 +35,58 @@ const resize = () => {
 
   ctx.scale(ratio, ratio);
 
+  ball = [];
+
   initialize();
 };
 
-const createChalk = () => {
-  chalk = null;
+const createLine = () => {
+  line = null;
 
   const x = innerWidth * 0.5;
   const y = innerHeight;
 
-  chalk = new Chalk(x, y);
-};
-
-const createText = () => {
-  text1 = null;
-  text2 = null;
-
-  const x = innerWidth * 0.5;
-  const y = innerHeight * 0.46;
-  const y2 = innerHeight * 0.06;
-
-  text1 = new Text("BASEKETBALL", x, y);
-  text2 = new Text("GAME BY DION", x, y + y2);
+  line = new Line(x, y);
 };
 
 const createBall = () => {
-  ball = null;
+  const radius = innerHeight * 0.0639;
+  const padding = innerHeight * 0.01;
+
+  const x = innerWidth * 0.5;
+  const y = innerHeight - radius - padding;
+
+  ball.push(new Ball(x, y, radius));
+};
+
+const createTarget = () => {
+  target = null;
 
   const radius = innerHeight * 0.0639;
-  const x = innerWidth * 0.5;
-  const y = innerHeight - radius;
+  const padding = innerHeight * 0.01;
 
-  ball = new Ball(x, y, radius);
+  const x = innerWidth * 0.5;
+  const y = innerHeight - radius - padding;
+
+  target = new Taregt(x, y, radius, beatColor);
+};
+
+const createBeat = () => {
+  for (let i = 0; i < 1; i++) {
+    const radius = innerHeight * 0.057;
+
+    const width = innerWidth * 0.4;
+    const perspective = width * 0.7;
+    const space = innerWidth * 0.1;
+    const minX =
+      innerWidth * 0.5 - width + perspective + space - space / 2 + radius / 2;
+    const maxX = innerWidth * 0.5 + width - perspective - space + space / 2;
+
+    const x = Math.random() * (maxX - minX) + minX;
+    const y = innerHeight * 0.4 + i * 100;
+
+    beat.push(new Beat(x, y, radius, beatColor));
+  }
 };
 
 // false true
@@ -73,10 +99,6 @@ const createNetManager = () => {
   // true false
   const length = 1;
   const isRandomColor = false;
-
-  if (length >= 2 || isMove) {
-    round.style.display = "none";
-  }
 
   const getRandomRgbColor = () => {
     const r = Math.floor(Math.random() * 256);
@@ -100,47 +122,60 @@ const createGuideLine = () => {
 
   const padding = innerHeight * 0.0143;
   const x = innerWidth * 0.5;
-  const y = innerHeight - ball.radius * 2 - padding;
+  const y = innerHeight - innerHeight * 0.0639 * 2 - padding;
   const color = "#fff";
 
   guideLine = new GuideLine(x, y, color);
 };
 
 const createEventHandlers = () => {
-  eventHandlers = new EventHandlers(ball, guideLine);
+  eventHandlers = new EventHandlers(ball, createBall, guideLine);
   eventHandlers.registerEvents();
 };
 
 const initialize = () => {
-  createChalk();
-  createText();
+  createLine();
+  createTarget();
   createBall();
   createNetManager();
   createGuideLine();
   createEventHandlers();
 };
 
-const drawChalk = () => {
-  const initColor = "hsla(0, 50%, 100%, 0.6)";
-  const changeColor = `hsl(${ball.score * 30}, 100%, 50%)`;
-  const color = ball.score === 0 ? initColor : changeColor;
-
-  chalk.draw(ctx, ball.score, color);
+const drawLine = () => {
+  line.draw(ctx);
 };
 
-const drawText = () => {
-  text1.draw(ctx);
-  text2.draw(ctx);
+const drawBeat = () => {
+  beat.forEach((b) => {
+    const target = {
+      x: innerWidth * 0.5,
+      y: innerHeight - b.radius,
+    };
+
+    b.update(target);
+    b.draw(ctx);
+  });
+
+  beat.forEach((b, index) => {
+    if (b.isEnd) {
+      beat.splice(index, 1);
+    }
+  });
 };
 
-const drawNetManager = (touch) => {
+const drawNetManager = (ball, touch) => {
   netManager.forEach((net) => {
     if (isMove) {
       net.moveMoment(0.01, isRoundMove);
     }
 
-    net.draw(ctx, ball, touch, ball.isRimPassed);
+    net.draw(ctx, ball, touch);
   });
+};
+
+const drawTarget = () => {
+  target.draw(ctx);
 };
 
 const drawRimPedestal = () => {
@@ -150,15 +185,25 @@ const drawRimPedestal = () => {
 };
 
 const drawBall = (timeStamp, mouse) => {
-  if (mouse.isStart) {
-    ball.throw(timeStamp, mouse);
+  ball.forEach((b) => {
+    if (b.isStart) {
+      b.throw(timeStamp, mouse);
+    }
+
+    socre.innerHTML = b.score;
+
+    b.updatePassedBall();
+    b.windowRebound();
+    b.draw(ctx);
+  });
+
+  if (ball.length > 1) {
+    ball.forEach((b, index) => {
+      if (b.isEnd) {
+        ball.splice(index, 1);
+      }
+    });
   }
-
-  socre.innerHTML = ball.score;
-
-  ball.updatePassedBall();
-  ball.windowRebound();
-  ball.draw(ctx, mouse);
 };
 
 const animate = (timeStamp) => {
@@ -167,22 +212,31 @@ const animate = (timeStamp) => {
   const mouse = eventHandlers.mouse;
   const touch = eventHandlers.touch;
 
-  if (mouse.isDown) {
+  if (!currentTime) {
+    currentTime = timeStamp;
+  }
+
+  const now = timeStamp - currentTime;
+
+  if (now > fpsTime) {
+    createBeat();
+
+    currentTime = timeStamp;
+  }
+
+  drawTarget();
+  drawBeat();
+
+  if (mouse.x !== null && mouse.y !== null) {
     guideLine.draw(ctx, mouse);
   }
 
-  drawChalk();
-  drawText();
+  drawLine();
+  drawRimPedestal();
+  drawNetManager(ball, touch);
+  drawBall(timeStamp, mouse);
 
-  if (!ball.isRimPassed) {
-    drawRimPedestal();
-    drawNetManager(touch);
-    drawBall(timeStamp, mouse);
-  } else {
-    drawRimPedestal();
-    drawBall(timeStamp, mouse);
-    drawNetManager(touch);
-  }
+  currentTime++;
 
   requestAnimationFrame(animate);
 };

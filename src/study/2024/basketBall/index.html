@@ -39,78 +39,33 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: radial-gradient(50% 50% at 50% 40%, #0d1520, #000000);
+        background: radial-gradient(50% 50% at 50% 50%, #0d1520, #000000);
       }
 
-      .round {
+      .score-board {
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
         z-index: 1;
-        pointer-events: none;
-
-        .inner {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 100vw;
-          padding: 2.5% 0;
-          background-color: rgba(255, 255, 255, 1);
-          color: #323232;
-          opacity: 0;
-          transform: translateX(-100%);
-          animation: slideIn 0.3s 1s linear forwards,
-            fadeOut 0.1s 2s linear forwards;
-          p {
-            text-align: center;
-            font-family: blackHanSans;
-            font-size: 8vh;
-          }
-        }
-      }
-
-      .score-board {
-        position: absolute;
-        top: 70px;
-        left: 50%;
-        transform: translate(-50%, 0);
-        z-index: 1;
 
         p {
           font-size: 6vh;
           text-align: center;
-          font-family: blackHanSans;
           color: #fff;
-        }
-      }
-
-      @keyframes slideIn {
-        to {
-          opacity: 1;
-          transform: translateX(0);
-        }
-      }
-
-      @keyframes fadeOut {
-        to {
-          opacity: 0;
+          font-weight: 800;
+          text-shadow: 0 0 5px rgba(255, 100, 90, 0.7),
+            0 0 10px rgba(255, 130, 120, 0.6), 0 0 15px rgba(255, 180, 170, 0.5);
         }
       }
     </style>
   </head>
   <body>
-    <div class="round">
-      <div class="inner">
-        <p>Round 1</p>
-      </div>
-    </div>
-
     <div class="score-board">
-      <p class="score">0</p>
+      <p class="score"></p>
     </div>
 
-    <canvas> </canvas>
+    <canvas></canvas>
 
     <script type="module" src="./index.js"></script>
   </body>

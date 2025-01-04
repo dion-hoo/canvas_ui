@@ -26,9 +26,11 @@ export class Point {
     this.gravity = gravity;
     this.mass = this.radius * 1.3;
     this.damping = 0.47;
+    this.gap = 0;
 
     this.floorCount = 0;
     this.maxFloorCount = 7;
+    this.isEnd = false;
   }
 
   update(dt) {
@@ -63,7 +65,7 @@ export class Point {
     }
   }
 
-  constraints(ctx, target, gap, strokeColor, isDraw = true) {
+  constraints(target, gap) {
     const { dx, dy, distance } = getDistance2(
       this.x,
       this.y,
@@ -71,13 +73,13 @@ export class Point {
       target.y
     );
 
-    const diff = distance - gap;
+    const diff = distance - (gap + this.gap);
     const percent = diff / distance / 2;
 
     const tx = percent * dx;
     const ty = percent * dy;
 
-    if (distance > gap) {
+    if (distance > gap + this.gap) {
       if (!this.isFixed) {
         this.x += tx;
         this.y += ty;
@@ -87,17 +89,6 @@ export class Point {
         target.x -= tx;
         target.y -= ty;
       }
-    }
-
-    if (isDraw) {
-      ctx.save();
-      ctx.strokeStyle = strokeColor;
-      ctx.lineWidth = innerHeight * 0.0007;
-      ctx.beginPath();
-      ctx.moveTo(this.x, this.y);
-      ctx.lineTo(target.x, target.y);
-      ctx.stroke();
-      ctx.restore();
     }
   }
 
