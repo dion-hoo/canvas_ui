@@ -17,15 +17,19 @@ let eventHandlers = null;
 let line = null;
 let beat = [];
 
-let fps = 1.4;
+let fps = 60;
 let fpsTime = 1000 / fps;
 let currentTime = 0;
+
+let beatfps = 1.4;
+let beatFpsTime = 1000 / beatfps;
+let beatCurrentTime = 0;
 let target = null;
 
-const beatColor = "#19c";
+const beatColor = "orange";
 
 const resize = () => {
-  const ratio = 1; //devicePixelRatio;
+  const ratio = 1; // devicePixelRatio;
 
   canvas.width = innerWidth * ratio;
   canvas.height = innerHeight * ratio;
@@ -46,7 +50,7 @@ const createLine = () => {
   const x = innerWidth * 0.5;
   const y = innerHeight;
 
-  line = new Line(x, y);
+  line = new Line(x, y, beatColor);
 };
 
 const createBall = () => {
@@ -215,28 +219,33 @@ const animate = (timeStamp) => {
   if (!currentTime) {
     currentTime = timeStamp;
   }
+  // const delta = timeStamp - currentTime;
 
-  const now = timeStamp - currentTime;
+  if (!beatCurrentTime) {
+    beatCurrentTime = timeStamp;
+  }
 
-  if (now > fpsTime) {
+  const bestStart = timeStamp - beatCurrentTime;
+
+  if (bestStart > beatFpsTime) {
     createBeat();
 
-    currentTime = timeStamp;
+    beatCurrentTime = timeStamp;
   }
 
   drawTarget();
   drawBeat();
+  drawLine();
 
   if (mouse.x !== null && mouse.y !== null) {
     guideLine.draw(ctx, mouse);
   }
 
-  drawLine();
   drawRimPedestal();
   drawNetManager(ball, touch);
   drawBall(timeStamp, mouse);
 
-  currentTime++;
+  beatCurrentTime++;
 
   requestAnimationFrame(animate);
 };

@@ -68,7 +68,12 @@ export class NetManager {
     ball.forEach((b) => {
       if (b.isStart) {
         this.net.releaseNet(b);
-        this.rim.collision(b, this.net.collisionPoint, this.net.scoredPoint);
+        this.rim.collision(
+          ctx,
+          b,
+          this.net.collisionPoint,
+          this.net.scoredPoint
+        );
       }
     });
   }

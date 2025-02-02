@@ -1,5 +1,5 @@
 export class Line {
-  constructor(x, y) {
+  constructor(x, y, color) {
     this.x = x;
     this.y = y;
     this.width = innerWidth * 0.4;
@@ -9,11 +9,24 @@ export class Line {
     this.perspective = this.width * 0.7;
     this.ratio = this.perspective / this.width;
 
-    this.color = "rgba(255, 255, 255, 0.1)";
+    this.startColor = color;
+  }
+
+  setGradient(ctx, x) {
+    const gradient = ctx.createLinearGradient(this.x, this.y, x, this.height);
+
+    gradient.addColorStop(0, this.startColor);
+    gradient.addColorStop(1, "#000");
+
+    return gradient;
   }
 
   leftSide(ctx) {
-    ctx.fillStyle = this.color;
+    const x =
+      this.x - this.width + this.perspective + this.space - this.space / 2;
+    const color = this.setGradient(ctx, x);
+
+    ctx.fillStyle = color;
     ctx.beginPath();
     ctx.moveTo(this.x - this.width, this.y);
     ctx.lineTo(
@@ -30,7 +43,11 @@ export class Line {
   }
 
   rightSide(ctx) {
-    ctx.fillStyle = this.color;
+    const x =
+      this.x + this.width - this.perspective - this.space + this.space / 2;
+    const color = this.setGradient(ctx, x);
+
+    ctx.fillStyle = color;
     ctx.beginPath();
     ctx.moveTo(this.x + this.width, this.y);
     ctx.lineTo(
@@ -48,21 +65,6 @@ export class Line {
 
   draw(ctx) {
     ctx.save();
-
-    ctx.shadowBlur = 5;
-    ctx.shadowColor = this.color;
-
-    const gradient = ctx.createLinearGradient(
-      this.x,
-      this.y,
-      this.width,
-      this.height
-    );
-
-    gradient.addColorStop(0, "#19c");
-    gradient.addColorStop(1, "#000");
-
-    this.color = gradient;
 
     this.leftSide(ctx);
     this.rightSide(ctx);

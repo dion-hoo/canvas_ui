@@ -111,9 +111,6 @@ export class Ball extends Point {
     ctx.save();
     ctx.translate(this.x, this.y);
 
-    ctx.shadowBlur = this.shadowBlur;
-    ctx.shadowColor = "#fff";
-
     ctx.fillStyle = "#fff";
     ctx.beginPath();
     ctx.arc(0, 0, this.radius, 0, Math.PI * 2);

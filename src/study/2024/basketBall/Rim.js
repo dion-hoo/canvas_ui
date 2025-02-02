@@ -32,9 +32,16 @@ export class Rim {
     ];
   }
 
-  collision(ball, collisionPoint, scoredPoint) {
+  collision(ctx, ball, collisionPoint, scoredPoint) {
     const p1 = scoredPoint[0];
     const p2 = scoredPoint[1];
+
+    ctx.strokeStyle = "green";
+    ctx.lineWidth = 10;
+    ctx.beginPath();
+    ctx.moveTo(p1.x, p1.y);
+    ctx.lineTo(p2.x, p2.y);
+    ctx.stroke();
 
     const { x, y } = projection(ball, p1, p2);
 
@@ -47,9 +54,16 @@ export class Rim {
       ball.isScored = true;
     }
 
+    ctx.strokeStyle = "red";
+    ctx.lineWidth = 10;
+    ctx.beginPath();
+
     for (let i = 0; i < this.collsitionTopPoint.length; i += 2) {
       const p1 = this.collsitionTopPoint[i];
       const p2 = this.collsitionTopPoint[i + 1];
+
+      ctx.moveTo(p1.x, p1.y);
+      ctx.lineTo(p2.x, p2.y);
 
       if (ball.isRimPassed) {
         const { x, y } = projection(ball, p1, p2);
@@ -62,7 +76,7 @@ export class Rim {
           y: dy / dist,
         };
 
-        if (dist < ball.radius) {
+        if (dist < ball.radius - 1) {
           const normalVector = {
             x: normal.x * ball.radius,
             y: normal.y * ball.radius,
@@ -84,12 +98,19 @@ export class Rim {
         }
       }
     }
+    ctx.stroke();
 
+    ctx.strokeStyle = "blue";
+    ctx.lineWidth = 10;
+    ctx.beginPath();
     for (let i = 0; i < collisionPoint.length; i++) {
       const p1 = collisionPoint[i];
       const p2 = collisionPoint[i + 2];
 
       if (!!p2) {
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+
         if (ball.isRimPassed) {
           const { x, y } = projection(ball, p1, p2);
 
@@ -110,12 +131,13 @@ export class Rim {
             ball.x = x + normalVector.x;
             ball.y = y + normalVector.y;
 
-            ball.oldX = ball.x - ball.vx;
-            ball.oldY = ball.y - ball.vy;
+            // ball.oldX = ball.x - ball.vx;
+            // ball.oldY = ball.y - ball.vy;
           }
         }
       }
     }
+    ctx.stroke();
   }
 
   pedestal(ctx) {
