@@ -9,6 +9,8 @@ const mouse = {
 };
 let sticker = null;
 
+// TODO: 
+
 const resize = () => {
   const ratio = 1; //devicePixelRatio;
 
