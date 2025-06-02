@@ -1,6 +1,6 @@
 # canvas_ui
 
-캔버스를 이용한 다양한 애니메이션 작업한 레포입니다.
+라이브러리를 사용하지 않고 자바스크립트 캔버스만을 이용해 다양한 인터랙티브한 화면을 작업하는 레포입니다🃏
 
 ### Game
 
@@ -12,12 +12,10 @@ Youtuber : [Chris Courses](https://www.youtube.com/channel/UC9Yp2yz6-pwhQuPlIDV_
 
 - [x] Supter Mario - canvas를 이용한 슈퍼마리오 게임(`superMarioServer`)<br />
 - [x] SudoKu
-- [ ] Game Tutorial - <span style="color: #dcffe4; font-weight:bold">STUDYING</span>
-- [ ] Pokémon
 
 <br/>
 
-### 작업 결과
+### 결과
 
 #### 1. super mario
 
