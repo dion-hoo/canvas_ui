@@ -6,7 +6,7 @@ export class Swing {
     };
     this.r2 = {
       x: x + width / 2,
-      y: y - width / 3,
+      y: y,
     };
     this.t1 = {
       x: x - width / 2,
@@ -14,47 +14,18 @@ export class Swing {
     };
     this.t2 = {
       x: x + width / 2,
-      y: y + (this.length - width / 3),
+      y: y,
     };
+
+    this.width = width;
 
     this.angle = (angle * Math.PI) / 180;
     this.angleVel = 0;
     this.length = length;
-    this.gravity = 0.1;
+    this.gravity = 0.09;
   }
 
-  move(ctx, mouse, r, t) {
-    if (mouse.isDown) {
-      const v = {
-        x: t.x - r.x,
-        y: t.y - r.y,
-      };
-
-      const w = {
-        x: mouse.x - r.x,
-        y: mouse.y - r.y,
-      };
-
-      const cross = v.x * w.y - v.y * w.x;
-      const vDist = Math.hypot(v.x, v.y);
-      const dist = Math.abs(cross / vDist);
-      const minDist = 50;
-
-      const radian = Math.atan2(w.y, w.x);
-      const angle = 90 - (radian * 180) / Math.PI;
-
-      const setAngle = Math.max(-70, Math.min(70, angle));
-
-      this.angle = (setAngle * Math.PI) / 180;
-
-      ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
-      ctx.beginPath();
-      ctx.arc(mouse.x, mouse.y, minDist, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-
-  update() {
+  updateAngle() {
     const force = Math.sin(this.angle) * (-this.gravity / (this.length * 0.1));
 
     this.angleVel += force;
@@ -63,42 +34,65 @@ export class Swing {
     this.angleVel *= 0.996;
   }
 
-  drawFloor(ctx, x1, y1, x2, y2) {
-    ctx.strokeStyle = "#95400d";
-    ctx.beginPath();
-    ctx.moveTo(x1 - 50, y1);
-    ctx.lineTo(x2 - 50, y2);
-    ctx.lineTo(x2 + 50, y2);
-    ctx.lineTo(x1 + 50, y1);
-    ctx.lineTo(x1 - 50, y1);
-    ctx.stroke();
+  grab(ctx, mouse, r) {
+    if (mouse.isDown) {
+      const w = {
+        x: mouse.x - r.x,
+        y: mouse.y - r.y,
+      };
+
+      const minDist = 50;
+      const radian = Math.atan2(w.y, w.x);
+      const angle = 90 - (radian * 180) / Math.PI;
+
+      this.angle = (angle * Math.PI) / 180;
+
+      ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+      ctx.beginPath();
+      ctx.arc(mouse.x, mouse.y, minDist / 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
   }
 
-  draw(ctx, mouse) {
-    this.move(ctx, mouse, this.r1, this.t1);
-    this.move(ctx, mouse, this.r2, this.t2);
-
-    ctx.strokeStyle = "#95400d";
-    ctx.lineWidth = 2;
+  drawLine(ctx, start, end) {
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth = 1;
 
     ctx.beginPath();
-    ctx.moveTo(this.r1.x, this.r1.y);
+    ctx.moveTo(start.x, start.y);
 
-    const x1 = this.r1.x + Math.sin(this.angle) * this.length;
-    const y1 = this.r1.y + Math.cos(this.angle) * this.length;
+    const x1 = end.x + Math.sin(this.angle) * this.length;
+    const y1 = end.y + Math.cos(this.angle) * this.length;
 
     ctx.lineTo(x1, y1);
     ctx.stroke();
 
+    return { x: x1, y: y1 };
+  }
+
+  drawBoard(ctx, r1, r2) {
+    const width = this.width * 1.2;
+    const height = 20;
+    const side = r2.x - r1.x;
+
+    // ctx.fillStyle = "#95400d";
+    ctx.fillStyle = "#000";
     ctx.beginPath();
-    ctx.moveTo(this.r2.x, this.r2.y);
 
-    const x2 = this.r2.x + Math.sin(this.angle) * this.length;
-    const y2 = this.r2.y + Math.cos(this.angle) * this.length;
+    const x1 = r1.x + side / 2 - width / 2;
+    const x2 = r1.y;
 
-    ctx.lineTo(x2, y2);
-    ctx.stroke();
+    ctx.roundRect(x1, x2, width, height, [height / 2]);
+    ctx.fill();
+  }
 
-    this.drawFloor(ctx, x1, y1, x2, y2);
+  draw(ctx, mouse) {
+    this.grab(ctx, mouse, this.r1);
+    this.grab(ctx, mouse, this.r2);
+
+    const r1 = this.drawLine(ctx, this.r1, this.t1);
+    const r2 = this.drawLine(ctx, this.r2, this.t2);
+
+    this.drawBoard(ctx, r1, r2);
   }
 }
